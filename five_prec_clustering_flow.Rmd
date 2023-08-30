@@ -1,0 +1,595 @@
+---
+title: "Basic Serut Flow - SuperAgers"
+output: html_notebook
+---
+---
+title: "5% DB"
+output: html_notebook
+---
+
+#Installation of the SeuratDisk & SeuratData:
+
+```{r (Optional) installations}
+#if (!requireNamespace("remotes", quietly = TRUE)) {
+#  install.packages("remotes")
+#}
+#remotes::install_github("mojaveazure/seurat-disk")
+#remotes::install_github('satijalab/seurat-data')
+#install.packages("cli")
+#install.packages("crayon")
+#install.packages("hdf5r")
+#install.packages("R6")
+#install.packages("Matrix")
+#install.packages("rlang")
+#install.packages("withr")
+#install.packages("SeuratData")
+#install.packages("withr")
+#install.packages("hrbrthemes")
+
+```
+
+```{r Libreries} 
+
+library(Seurat)
+library(withr)
+library(Seurat)
+library(SeuratDisk)
+library(SeuratData)
+library(ggplot2)
+library(gridExtra)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(hrbrthemes)
+source("utils.R")
+
+```
+
+
+Loading the object:
+```{r} 
+#five_prec
+#with_pdf(file.path("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project/plots", "test.pdf"), width = 7, height = 5)
+#ten_prec <- LoadH5Seurat("/Users/itamar_shahar/Downloads/objects/SuperAgersRandomSubset0.1.h5seurat")
+
+#with_png(file.path(tempdir(), "test.png"), width = 800, height = 600,
+#plot(runif(5))
+#)
+```
+
+## Basis look at the parameters:
+Which genders are there: 
+
+
+
+```{r Which genders are there}
+unique(five_prec$Gender)
+```           
+
+Which Ages are there: 
+```{r Which Ages are there }
+unique(five_prec$Age)
+```
+Which orig.ident are there: 
+```{r Which orig.ident are there}
+unique(five_prec$orig.ident)
+```
+Which sample_number are there: 
+```{r Which sample_number are there}
+sort(unique(five_prec$sample_number))
+```
+
+Which SampleID are there: 
+```{r Which SampleID are there:}
+
+unique_sample_ids <- unique(five_prec$SampleID)
+unique_sample_ids# Get unique SampleID values
+sorted_unique_sample_ids <- sort(unique_sample_ids)  # Sort the unique values
+count <- length(sorted_unique_sample_ids)  # Count the number of sorted unique values
+
+# Print the count of sorted unique SampleID values
+message("Number of different people: ", count)
+
+```
+
+Which Diagnosis are there: 
+```{r Which diagnosis are there}
+unique(five_prec$Diagnosis)
+sum(five_prec$Diagnosis == "HA")
+
+```
+Which pmi are there: 
+```{r Which pmi are there}
+sort(unique(five_prec$pmi))
+
+```
+Which BRAAK are there: 
+```{r Which BRAAK are there}
+unique(five_prec$BRAAK)
+
+```
+
+
+Which Overall.CAA.Score are there: 
+```{r Which Overall.CAA.Score are there}
+unique(five_prec$Overall.CAA.Score)
+```
+
+Which C.score  are there: 
+```{r Which C.score  are there}
+unique(five_prec$C.score)
+```
+Which Thal  are there: 
+```{r Which Thal  are there}
+unique(five_prec$Thal)
+```
+
+
+Which Lewy.Body.Disease  are there: 
+```{r Which Lewy.Body.Disease  are there}
+unique(five_prec$Lewy.Body.Disease)
+
+```
+Which APOE.genotype   are there: 
+```{r Which APOE.genotype   are there}
+unique(five_prec$APOE.Genotype)
+
+```
+## How many cells per donor? 
+```{r }
+#result <- five_prec@meta.data %>%
+#  group_by(sample_number) %>%
+#  summarize(number_of_cells = n())
+#?group_by
+print("Celles per Donor")
+#print(result)
+```
+
+```{r  adding the SampleID + Diagnosis col }
+
+five_prec@meta.data["SampleID_Diagnosis"] <- paste(five_prec$SampleID, five_prec$Diagnosis, sep = "_")
+five_prec[["SampleID_Diagnosis"]] <- paste(five_prec$SampleID, five_prec$Diagnosis, sep = "_")
+#head(five_prec@meta.data, 5)
+```
+
+
+
+# QC 
+
+```{r setup, include=FALSE}
+#head(five_prec@meta.data, 5)
+five_prec[["percent.mt"]] <- PercentageFeatureSet(five_prec, pattern = "^MT-", assay = "RNA")
+#summary(five_prec@meta.data$percent.mt)
+#tail(sort(five_prec@meta.data$percent.mt), 400)
+#head(five_prec@assays)#["CTCATCATCTAAGGAG-7"]#$counts
+```
+
+For this stage there are multiple of ways to look for those outlayers: 
+We can use the `group.by` param and set it to: `Diagnosis` or `SampleID`. 
+In this case we choose to use `group.by = Diagnosis`
+```{r qc2, fig.height=7, fig.width=13}
+#Visualize QC metrics as a violin plot
+#VlnPlot(five_prec, 
+#        features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
+#        ncol = 3,
+#        #group.by = "SampleID")
+#        group.by = "Diagnosis")#,
+        #idents = 1:5)
+#sort(unique(five_prec@active.ident))
+# FeatureScatter is typically used to visualize feature-feature relationships, but can be used for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+```
+
+```{r}
+plot1 <- FeatureScatter(five_prec, 
+                        feature1 = "nCount_RNA", 
+                        feature2 = "percent.mt", 
+                        #group.by = "Diagnosis",
+                        group.by = "SampleID")
+            
+plot2 <- FeatureScatter(five_prec,
+                        feature1 = "nCount_RNA",
+                        feature2 = "nFeature_RNA",
+                        #group.by = "Diagnosis",
+                        group.by = "SampleID")
+
+plot1 + plot2
+#summary(five_prec@meta.data$percent.mt)
+#five_prec <- subset(five_prec, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+```
+
+## bliud sub-set
+```{r}
+five_prec <- subset(five_prec, subset = nFeature_RNA > 200 & nFeature_RNA < 13000 & percent.mt < 10)
+```
+
+## Normalizing the data
+
+```{r normalize}
+five_prec <- SCTransform(five_prec, 
+                        #conserve.memory = TRUE,
+                        vars.to.regress = "percent.mt",
+                         ) 
+                         #normalization.method = "LogNormalize",
+                         #scale.factor = 10000)
+##?SCTransform
+```
+## Identification of highly variable features (feature selection)
+
+```{r var_features, fig.height=5, fig.width=11}
+
+#top10 <- head(VariableFeatures(five_prec), 10)
+#top10
+#?VariableFeaturePlot
+# plot variable features with and without labels
+#plot1 <- VariableFeaturePlot(five_prec)
+#plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+#plot1 + plot2
+```
+
+
+## Scaling the data
+this stage is relevant if we didn't the `SCTransform()`  
+
+```{r regress, fig.height=7, fig.width=11, results='hide'}
+#five_prec <- ScaleData(five_prec)
+```
+
+## Perform linear dimensional reduction
+
+Next we perform PCA on the scaled data. By default, only the previously determined variable features are used as input, but can be defined using `features` argument if you wish to choose a different subset.
+
+```{r pca,results='hide'}
+five_prec <- RunPCA(five_prec, features = 
+                      VariableFeatures(object = five_prec))
+```
+
+Seurat provides several useful ways of visualizing both cells and features that define the PCA, including `VizDimReduction()`, `DimPlot()`, and `DimHeatmap()`
+
+```{r pca_viz, message=TRUE}
+# Examine and visualize PCA results a few different ways
+#print(five_prec[['pca']], dims = 1:5, nfeatures = 5)
+#VizDimLoadings(five_prec, dims = 1:2, reduction = 'pca')
+
+```
+
+
+In particular `DimHeatmap()` allows for easy exploration of the primary sources of heterogeneity in a dataset, and can be useful when trying to decide which PCs to include for further downstream analyses. Both cells and features are ordered according to their PCA scores. Setting `cells` to a number plots the 'extreme' cells on both ends of the spectrum, which dramatically speeds plotting for large datasets. Though clearly a supervised analysis, we find this to be a valuable tool for exploring correlated feature sets.
+
+```{r single-heatmap}
+#DimHeatmap(five_prec, dims = 1, cells = 500, balanced = TRUE)
+```
+
+```{r multi-heatmap, fig.height=15, fig.width=9}
+#DimHeatmap(five_prec, dims = 1:15, cells = 500, balanced = TRUE)
+```
+
+## Determine the 'dimensionality' of the dataset
+
+```{r jackstraw, fig.height=6, fig.width=10}
+# NOTE: This process can take a long time for big datasets, comment out for expediency. More approximate techniques such as those implemented in ElbowPlot() can be used to reduce computation time
+#five_prec <- JackStraw(five_prec, num.replicate = 100)
+#five_prec <- ScoreJackStraw(five_prec, dims = 1:20)
+```
+
+
+```{r jsplots, fig.height=6, fig.width=10}
+#JackStrawPlot(five_prec, dims = 1:15)
+```
+
+An alternative heuristic method generates an 'Elbow plot': a ranking of principle components based on the percentage of variance explained by each one (`ElbowPlot()` function). In this example, we can observe an 'elbow' around PC9-10, suggesting that the majority of true signal is captured in the first 10 PCs. 
+
+```{r elbow_plot, fig.height=6, fig.width=10}
+#ElbowPlot(five_prec)
+```
+
+## Cluster the cells
+
+```{r cluster, fig.height=5, fig.width=7}
+five_prec <- FindNeighbors(five_prec, dims = 1:15)
+five_prec <- FindClusters(five_prec, resolution = 0.2)
+```
+
+## Run non-linear dimensional reduction (UMAP/tSNE)
+
+Seurat offers several non-linear dimensional reduction techniques, such as tSNE and UMAP, to visualize and explore these datasets. The goal of these algorithms is to learn the underlying manifold of the data in order to place similar cells together in low-dimensional space. Cells within the graph-based clusters determined above should co-localize on these dimension reduction plots. As input to the UMAP and tSNE, we suggest using the same PCs as input to the clustering analysis.
+
+```{r tsne, fig.height=5, fig.width=7}
+# If you haven't installed UMAP, you can do so via reticulate::py_install(packages = "umap-learn")
+five_prec <- RunUMAP(five_prec, dims = 1:15)
+```
+
+```{r tsneplot, fig.height=5, fig.width=7}
+# note that you can set `label = TRUE` or use the LabelClusters function to help label individual clusters
+DimPlot(five_prec,
+        reduction = 'umap',
+        label = T
+        #group.by ="Diagnosis",
+        #group.by ="SampleID",
+        )  & NoAxes() & NoLegend()
+
+Command(five_prec, "FindClusters")
+#?DimPlot
+```
+
+You can save the object at this point so that it can easily be loaded back in without having to rerun the computationally intensive steps performed above, or easily shared with collaborators.
+
+```{r saveobject, eval=FALSE}
+#saveRDS(pbmc, file = "../output/pbmc_tutorial.rds")
+```
+
+## Finding differentially expressed features (cluster biomarkers)
+
+
+```{r markers1, fig.height=8, fig.width=15}
+# find all markers of cluster 2
+cluster2.markers <- FindMarkers(five_prec, 
+                                ident.1 = 0,
+                                min.pct = 0.25)
+head(cluster2.markers, n = 5)
+
+
+cluster2.markers["pct1_div_pct2"] <- abs(cluster2.markers$pct.1 - cluster2.markers$pct.2)
+head(cluster2.markers, n = 5)
+
+sorted_cluster2.markers <- cluster2.markers[order(cluster2.markers$pct1_div_pct2,decreasing = TRUE), ]
+head(sorted_cluster2.markers, n = 40)
+
+# Convert the list to a data frame with categories and marker genes
+cell_markers <- list(
+  #"Neuroepithelial_cells" = c("SOX2", "HES1", "CDH1",
+  #                             "NES", "NOTCH1", "OCLN"),
+  #"Intermediate_progenitors" = c("TBR2", "MASH1/Ascl1"),
+  #"Immature_neurons" = c("DCX", "beta_III_tubulin", "NEUROD1", "TBR1", "STMN1"),
+  "Oligodendrocyte_precursor_cells" = c("PDGFRA", "CSPG4"),
+  "Mature_oligodendrocytes" = c("OLIG1", "OLIG2", "MBP", "MOG", "SOX10"),
+  #"Schwann_cells" = c("MPZ", "NCAM1", "GAP43","S100A1", "S100A2", "S100A3", "NGFR"),
+  "Astrocytes" = c("GFAP", "SLC1A3", "SLC1A2", "S100B",
+                   "ALDH1L1"),
+  "Microglia" = c("TMEM119", "ITGAM", "PTPRC", "AIF1", "CX3CR1", "CD68", "CD40"
+                  , "ADGRE1", "PYCARD"),
+
+  "Mature_neurons" = c( "MAP2"
+                       ,"RBFOX3", "DLG4", "SYP"),
+  
+  "Glutamatergic_neurons" = c("SLC17A7",
+                              "GLS",
+                              "SLC17A6", "GRIN1", "GRIN2B", "SLC6A1"),
+  "GABAergic_neurons" = c("GAD2", "GAD1"),
+  #"Cholinergic_neurons" = c("Choline_acetyltransferase", "vesicular_acetylcholine_transporter", "acetylcholinesterase"),
+  "vacular" = c("PECAM1","LYVE1", "TEK","VCAM1", "VWF")
+)
+markers_to_csv(cell_markers, "cell_marker_24_8_23.csv")
+```
+```{r}
+?facet_grid
+?DotPlot
+relevant_cell_clustering_draw_plots <- function() { 
+  Oligodendrocyte_precursor_cells_plot <- DotPlot(object = five_prec, 
+        scale.min = 0,
+        features = cell_markers["Oligodendrocyte_precursor_cells"], 
+        scale.max = 100, 
+) 
+Astrocytes_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["Astrocytes"],
+        scale.min = 0,
+        scale.max = 100
+)
+Microglia_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["Microglia"],
+        scale.min = 0,
+        scale.max = 100
+)
+Mature_neurons_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["Mature_neurons"],
+        scale.min = 0,
+        scale.max = 100
+)
+Glutamatergic_neurons_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["Glutamatergic_neurons"],
+        scale.min = 0,
+        scale.max = 100
+        )
+GABAergic_neurons_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["GABAergic_neurons"],
+        scale.min = 0,
+        scale.max = 100
+        )
+vacular_plot <- DotPlot(object = five_prec, 
+        features = cell_markers["vacular"],
+        scale.min = 0,
+        scale.max = 100
+        )
+  }
+```
+```{r}
+draw_and_save_dot_plot <- function()
+{
+  g <-DotPlot(five_prec, 
+        feature=cell_markers) & scale_color_viridis_c(option="turbo") & RotatedAxis()
+
+
+#DimPlot(five_prec, label =T)
+ggsave("dot_plot.pdf", 
+       g, 
+       width = 35, 
+       height = 15, limitsize = FALSE)
+}
+draw_and_save_dot_plot()
+```
+### So we can say:
+-> that cluster 1 & 14 contains Microglia
+-> that cluster 7 contains Oligodendrocyte_precursor_cells
+
+```{r}
+head(cluster2.markers, n = 5)
+# find all markers distinguishing cluster 5 from clusters 0 and 3
+cluster5.markers <- FindMarkers(five_prec, ident.1 = 5, ident.2 = c(0, 3), min.pct = 0.25)
+head(cluster5.markers, n = 5)
+```
+```{text}
+Seurat has several tests for differential expression which can be set with the test.use parameter (see our [DE vignette](de_vignette.html) for details). For example, the ROC test returns the 'classification power' for any individual marker (ranging from 0 - random, to 1 - perfect).
+```
+
+```{r}
+#tmp <- cell_markers["Astrocytes"]
+
+cell_types_to_plot <- c("Mature_oligodendrocytes", "Astrocytes", "Mature_neurons", "Glutamatergic_neurons", "GABAergic_neurons", "Oligodendrocyte_precursor_cells", "Microglia")
+
+plot_marker_expression <- function(cell_types_to_plot) {
+  for (cell_name in cell_types_to_plot) {
+    g <- FeaturePlot(five_prec,
+                     features = cell_markers[[cell_name]],
+                     label = TRUE) + NoAxes()
+
+                     #interactive = TRUE)                     + NoAxes()
+
+                    #+ NoAxes()
+    ggsave(paste0(cell_name, ".pdf"),
+           plot = g,
+           width = 35, 
+           height = 15,
+           limitsize = FALSE,
+           path="/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+  }
+}
+?ggsave
+plot_marker_expression(cell_types_to_plot)
+
+plot_and_save_vln_plot <- function(features){
+vln_plot <- VlnPlot(five_prec, features = features)
+ggsave(paste0(vln_plot, features,  ".pdf"),
+           plot = vln_plot,
+           width = 35, 
+           height = 15,
+           limitsize = FALSE,
+           path="/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+}
+
+
+five_prec <- LoadH5Seurat("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/five_prec.h5seurat")
+features <- c("PDGFRA", "CSPG4")
+vln_plot <- VlnPlot(five_prec, features = features)
+vln_plot
+
+
+SaveH5Seurat(five_prec,
+             filename="five_prec", 
+             overwrite = TRUE)
+?SaveH5Seurat
+
+plot_marker_expretion()
+```
+
+```{r labelplot, fig.height=5, fig.width=9}
+new.cluster.ids <- c("Mature_oligodendrocytes", 
+                     "Mature_oligodendrocytes", 
+                     "Astrocytes",
+                     "Neurons",
+                     "Microglia", 
+                     "Neurons",
+                     "OPC",
+                      "Neurons",
+                     "Neurons",
+                     "Neurons",
+                     "vascular",
+                     "Astrocytes")
+
+names(new.cluster.ids) <- levels(five_prec)
+five_prec <- RenameIdents(five_prec, new.cluster.ids)
+
+names(new.cluster.ids) <- levels(pbmc)
+pbmc <- RenameIdents(pbmc, new.cluster.ids)
+DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+# old flow
+
+
+
+# new flow 
+plot <- DimPlot(five_prec, reduction = "umap") + NoLegend() + NoAxes()
+LabelClusters(plot = plot, id = five_prec@meta.data$Age) 
+
+
+new.cluster.ids
+
+
+length(unique(new.cluster.ids))
+# Assuming your data frame is named 'serut_meta_data' and the column is named 'cluser'
+
+add_new_clusterring <- fucntion()
+
+five_prec@meta.data <- five_prec@meta.data %>%
+  mutate(new_col = case_when(
+    seurat_clusters == 0 ~ "Mature_oligodendrocytes",
+    seurat_clusters == 1 ~ "Mature_oligodendrocytes",
+    seurat_clusters == 2 ~ "Astrocytes",
+    seurat_clusters == 3 ~ "Neurons",
+    seurat_clusters == 4 ~ "Microglia",
+    seurat_clusters == 5 ~ "Neurons",
+    seurat_clusters == 6 ~ "OPC",
+    seurat_clusters == 7 ~ "Neurons",
+    seurat_clusters == 8 ~ "Neurons",
+    seurat_clusters == 9 ~ "Neurons",
+    seurat_clusters == 10 ~ "vascular",
+    seurat_clusters == 11 ~ "Astrocytes"
+  ))
+#five_prec@meta.data$seurat_clusters
+
+
+plot_and_save_dim_plot_with_cells_names <- function(){
+  g <- DimPlot(five_prec, 
+        reduction = "umap", 
+        label = TRUE, 
+        pt.size = 3,
+        label.size = 20,
+        group.by = "new_col") + NoAxes()+ NoLegend() +ggtitle("Clusters") +  theme(
+       plot.title = element_text(size = 60),  # Adjust title size
+       #axis.title = element_text(size = 30)   # Adjust axis label size
+     )
+  
+    ggsave("umap_with_cells_name.pdf",
+           plot = g,
+           width = 30, 
+           height = 20,
+           limitsize = FALSE,
+           path="/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+}
+plot_and_save_dim_plot_with_cells_names()
+
+g10<-FeaturePlot(five_prec,
+            features = c("PDGFRA", "CSPG4"),
+             label = TRUE, 
+            blend = TRUE ) + NoAxes()
+ggsave("tmpp.pdf",
+           plot = g10,
+           width = 30, 
+           height = 20,
+           limitsize = FALSE,
+           path="/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+
+# LabelClusters and LabelPoints will label clusters (a coloring variable) or individual points
+# on a ggplot2-based scatter plot
+plot <- DimPlot(five_prec, reduction = "umap") + NoLegend()
+#five_prec <- RenameIdents(five_prec, )
+
+five_prec <- RenameIdents(five_prec, new.cluster.ids)
+
+LabelClusters(plot = plot, id = "new_col")
+ggsave("tmppppp.pdf",
+           plot = plot,
+           width = 30, 
+           height = 20,
+           limitsize = FALSE,
+           path="/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+
+?DimPlot
+?AddMetaData
+#five_prec <- RenameIdents(five_prec, new.cluster.ids)
+#DimPlot(five_prec, reduction = 'umap', label = TRUE, pt.size = 0.5) + NoAxes()
+#head(five_prec@meta.data$seurat_clusters)
+```
+
+
+
+
+
+
