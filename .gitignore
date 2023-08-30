@@ -47,3 +47,12 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Databases 
+*.rds
+*.rds
+*.h5seurat
+
+
+
+
