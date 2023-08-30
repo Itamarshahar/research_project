@@ -45,7 +45,6 @@ source("utils.R")
 
 ```
 
-
 Loading the object:
 ```{r} 
 #five_prec
