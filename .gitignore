@@ -50,8 +50,10 @@ rsconnect/
 
 # Databases 
 *.rds
-*.rds
 *.h5seurat
+
+# files 
+*.pdf
 
 
 
