@@ -196,7 +196,6 @@ for (i in 1:K) {
   ggsave(paste0("DE_with_LFC_VS_null_k_", i, ".pdf"), plot = de_le_VlnPlot)
 }
 
-
 de_le_VlnPlot
 head(de_le$lfsr,2)
 de_null_VlnPlot <- volcano_plot(de_vsnull,
