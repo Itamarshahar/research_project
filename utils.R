@@ -3,9 +3,7 @@
 #' @param path 
 #'
 #' @return the markers as a DataFrame, list("Oligo" : list("marker1", "marker2"...))
-#' @examples
-#'
-#' @export 
+
 csv_to_markers <- function(path){
   cell_markers_read <- read.csv(path)
   # Convert the Markers column to a list of vectors
@@ -15,20 +13,7 @@ csv_to_markers <- function(path){
   return (cell_markers)
 }
 
-#' Convert Markers to CSV
-#'
-#' The function takes markers in the form of a list and saves them to a CSV file.
-#'
-#' @param markers A list containing cell types as keys and corresponding markers as values.
-#' @param path A character string specifying the path to save the CSV file.
-#' 
-#' @return The path to the saved CSV file.
-#'
-#' @examples
-#' markers <- list("Oligo" = c("marker1", "marker2"), "Neuron" = c("marker3", "marker4"))
-#' csv_path <- "path/to/save/markers.csv"
-#' markers_to_csv(markers, csv_path)
-#'
+
 markers_to_csv <- function(markers, path="cell_markers_tmp.csv"){ # markers is list(key:list(char))
   
   # Convert the cell_markers list to a data frame with one row per cell type
@@ -47,25 +32,7 @@ markers_to_csv <- function(markers, path="cell_markers_tmp.csv"){ # markers is l
 ## Visualizations   
 ################################################################################
 
-#' Dot Plot Visualization
-#'
-#' The function generates a dot plot visualization for given data and columns.
-#'
-#' @param data A data frame containing the data to be visualized.
-#' @param columns Character vector specifying the columns to be visualized.
-#' @param group.vector A vector specifying the grouping for data points.
-#' @param order Logical indicating whether to order columns based on hierarchical clustering.
-#' @param group.levels Optional character vector specifying custom levels for group.vector.
-#' @param do.return.order Logical indicating whether to return the order of columns after clustering.
-#' @param alpha.threshold Threshold for calculating the percentage of cells above which to display points.
-#' @param mean_threshold Threshold for calculating the group mean to display points.
-#'
-#' @return A ggplot object representing the dot plot visualization.
-#'
-#' @examples
-#' data <- data.frame(Gene1 = rnorm(100), Gene2 = rnorm(100), Group = rep(1:2, each = 50))
-#' dot_plot(data, columns = c("Gene1", "Gene2"), group.vector = data$Group)
-#'
+
 dot_plot <- function(data, 
                      columns,
                      group.vector,
@@ -113,20 +80,6 @@ dot_plot <- function(data,
   return(P)
 }
 
-#' Dot Plot Visualization for Topics
-#'
-#' The function generates a dot plot visualization for topics within an object.
-#'
-#' @param obj An object containing the data and topics.
-#' @param topic_columns Character vector specifying the topic columns to be visualized.
-#' @param group.by Column name specifying the grouping for data points.
-#'
-#' @return A ggplot object representing the dot plot visualization.
-#'
-#' @examples
-#' obj <- create_topic_object(data, topics, group_column = "Group")
-#' dotplot_topics(obj, topic_columns = c("Topic1", "Topic2"), group.by = "Group")
-#'
 dotplot_topics <- function(obj,
                            topic_columns,
                            group.by,
