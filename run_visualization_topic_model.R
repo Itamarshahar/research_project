@@ -181,7 +181,6 @@ saveRDS(de_psd, "de_night")
 ## visualize DE
 ################################################################################
 
-
 ## Topic Proportion - Matrix L (using UMAP or t-SNE)
 de_le <-readRDS("de_le")
 de_vsnull <- readRDS("de_vsnull")
