@@ -3,9 +3,7 @@
 #' @param path 
 #'
 #' @return the markers as a DataFrame, list("Oligo" : list("marker1", "marker2"...))
-#' @export
-#'
-#' @examples 
+
 csv_to_markers <- function(path){
   cell_markers_read <- read.csv(path)
   # Convert the Markers column to a list of vectors
@@ -34,7 +32,7 @@ markers_to_csv <- function(markers, path="cell_markers_tmp.csv"){ # markers is l
 ## Visualizations   
 ################################################################################
 
-## DotPlot
+
 dot_plot <- function(data, 
                      columns,
                      group.vector,
@@ -81,11 +79,6 @@ dot_plot <- function(data,
   if (do.return.order){return(columns[hclustering$order])}
   return(P)
 }
-
-
-
-
-
 
 dotplot_topics <- function(obj,
                            topic_columns,
