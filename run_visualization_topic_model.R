@@ -159,7 +159,6 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
 ################################################################################
 
 
-
 set.seed(1)
 counts <- obj@assays$RNA@counts
 row_sum <- rowSums(counts)
