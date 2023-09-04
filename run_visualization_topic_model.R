@@ -26,6 +26,9 @@ library(remotes)
 if (!requireNamespace("fastTopics", quietly = TRUE)) {
   remotes::install_github("stephenslab/fastTopics")
 }
+
+install.packages('remotes')
+
 library(Matrix)
 library(fastTopics)
 library(ggplot2)
@@ -40,16 +43,14 @@ library(magrittr)
 library(dplyr)
 library(gridExtra)
 source("utils.R")
-remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE,build = FALSE)
-#remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE)
-remotes::install_github("satijalab/seurat-data", "seurat5", quiet = FALSE)
-remotes::install_github("mojaveazure/seurat-object", "seurat5", quiet = FALSE)
-remotes::install_github("satijalab/azimuth", "seurat5", quiet = FALSE)
-remotes::install_github("satijalab/seurat-wrappers", "seurat5", quiet = FALSE)
-remotes::install_github("stuart-lab/signac", "seurat5", quiet = FALSE)
-install.packages('png')
 
+remotes::install_version("Seurat", version = "4.3.0")
+remotes::install_version("png")
+install.packages("png", repos = "https://cran.r-project.org/")
 
+remove.packages("png")
+install.packages("png")
+install.packages("png")
 
 ################################################################################
 ## # Load the object
