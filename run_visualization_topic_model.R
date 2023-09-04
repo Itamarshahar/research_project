@@ -18,8 +18,6 @@ path_to_plots <- args[3]
 ##  libreries
 ################################################################################
 
-
-
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes", repos = "http://cran.us.r-project.org")
 }
@@ -42,7 +40,14 @@ library(magrittr)
 library(dplyr)
 library(gridExtra)
 source("utils.R")
-
+remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE,build = FALSE)
+#remotes::install_github("satijalab/seurat", "seurat5", quiet = TRUE)
+remotes::install_github("satijalab/seurat-data", "seurat5", quiet = FALSE)
+remotes::install_github("mojaveazure/seurat-object", "seurat5", quiet = FALSE)
+remotes::install_github("satijalab/azimuth", "seurat5", quiet = FALSE)
+remotes::install_github("satijalab/seurat-wrappers", "seurat5", quiet = FALSE)
+remotes::install_github("stuart-lab/signac", "seurat5", quiet = FALSE)
+install.packages('png')
 
 
 
@@ -138,6 +143,7 @@ ggsave("FeaturePlot_topics_distribution_over_celltype.pdf",
        limitsize = FALSE,
        path=path_to_plots,
 )
+
 ################################################################################
 ## DotPlot
 ################################################################################
@@ -200,4 +206,7 @@ de_null_VlnPlot <- volcano_plot(de_vsnull,
                        k = K,
                        labels = genes$symbol
                        )
+
+
+
 
