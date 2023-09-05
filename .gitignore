@@ -57,3 +57,4 @@ rsconnect/
 tmp.R
 desktop.ini
 
+*.csv
