@@ -18,8 +18,6 @@ path_to_plots <- args[3]
 ##  libreries
 ################################################################################
 
-
-
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes", repos = "http://cran.us.r-project.org")
 }
@@ -28,6 +26,9 @@ library(remotes)
 if (!requireNamespace("fastTopics", quietly = TRUE)) {
   remotes::install_github("stephenslab/fastTopics")
 }
+
+install.packages('remotes')
+
 library(Matrix)
 library(fastTopics)
 library(ggplot2)
@@ -43,8 +44,13 @@ library(dplyr)
 library(gridExtra)
 source("utils.R")
 
+remotes::install_version("Seurat", version = "4.3.0")
+remotes::install_version("png")
+install.packages("png", repos = "https://cran.r-project.org/")
 
-
+remove.packages("png")
+install.packages("png")
+install.packages("png")
 
 ################################################################################
 ## # Load the object
@@ -138,6 +144,7 @@ ggsave("FeaturePlot_topics_distribution_over_celltype.pdf",
        limitsize = FALSE,
        path=path_to_plots,
 )
+
 ################################################################################
 ## DotPlot
 ################################################################################
@@ -154,27 +161,7 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
        path=path_to_plots,
 )
 
-################################################################################
-## run DE
-################################################################################
 
-
-set.seed(1)
-counts <- obj@assays$RNA@counts
-row_sum <- rowSums(counts)
-nonzero_rows <- row_sum != 0
-counts <- counts[nonzero_rows,]
-counts <- t(counts)
-
-de_psd <- de_analysis(fit = fit,
-                  X = counts,
-                  pseudocount = 0.1,
-                  lfc.stat  = "le",
-                  control = list(ns = 1e4,nc = 6),
-                  verbose = TRUE,
-                  )
-setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/databases/")
-saveRDS(de_psd, "de_night")
 
 ################################################################################
 ## visualize DE
@@ -200,4 +187,7 @@ de_null_VlnPlot <- volcano_plot(de_vsnull,
                        k = K,
                        labels = genes$symbol
                        )
+
+
+
 
