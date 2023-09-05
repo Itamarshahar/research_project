@@ -54,7 +54,7 @@ rsconnect/
 
 # files 
 *.pdf
-
+tmp.R
 
 
 
