@@ -2,7 +2,6 @@
 ## run DE
 ################################################################################
 
-
 set.seed(1)
 counts <- obj@assays$RNA@counts
 row_sum <- rowSums(counts)
