@@ -13,7 +13,6 @@ path_to_fit <- args[2] # RDS obj
 path_to_plots <- args[3]
 }
 
-
 ################################################################################
 ##  libreries
 ################################################################################
@@ -44,13 +43,17 @@ library(dplyr)
 library(gridExtra)
 source("utils.R")
 
+remotes::install_version("Seurat", version = "5")
 remotes::install_version("Seurat", version = "4.3.0")
 remotes::install_version("png")
 install.packages("png", repos = "https://cran.r-project.org/")
+install.packages("png")
+install.packages('Seurat')
+remotes::install_github("satijalab/seurat", "seurat5", quiet = FALSE)
 
-remove.packages("png")
-install.packages("png")
-install.packages("png")
+#remove.packages("png")
+install.packages("reticulate")
+#install.packages("png")
 
 ################################################################################
 ## # Load the object
@@ -80,6 +83,10 @@ print(paste0("The number of Topics are:", K))
 
 obj@meta.data <- cbind(obj@meta.data, fit$L)
 
+setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/databases")
+SaveH5Seurat(obj,
+             filename="obj_and_topics", 
+             overwrite = TRUE)
 ################################################################################
 ## Create folder for all the plots
 ################################################################################
