@@ -18,3 +18,5 @@ de_psd <- de_analysis(fit = fit,
                   )
 setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/databases/")
 saveRDS(de_psd, "de_night")
+
+shmuel
