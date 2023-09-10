@@ -2,11 +2,13 @@ args = commandArgs(trailingOnly=TRUE)
 
 if (length(args) != 5) {
   cat(" please provide 5 args: <path_to_the_input_data> <path_to_output_data> <K> <NC> <TRANSPOS(1/0)>")
-} else {input_path <- args[1]
-output_path <- args[2]
-K <- as.integer(args[3])
-NC <- as.integer(args[4])
-TRANSPOSE <-as.integer(args[5])}
+} else {
+  input_path <- args[1]
+  output_path <- args[2]
+  K <- as.integer(args[3])
+  NC <- as.integer(args[4])
+  TRANSPOSE <-as.integer(args[5])
+}
 
 if (!requireNamespace("fastTopics", quietly = TRUE)) {
   # Install the package
