@@ -12,7 +12,9 @@ path_to_obj <- args[1] # Seurat obj
 path_to_fit <- args[2] # RDS obj
 path_to_plots <- args[3]
 }
-
+path_to_obj <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects/five_prec.h5seurat"
+path_to_fit <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects/fitted_topic_model_k_15.rds"
+path_to_plots <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/plots"
 ################################################################################
 ##  libreries
 ################################################################################
@@ -39,26 +41,14 @@ library(Seurat)
 library(SeuratDisk)
 library(SeuratData)
 library(magrittr)
+library(gridExtra)
 library(dplyr)
 library(gridExtra)
 source("utils.R")
 
-remotes::install_version("Seurat", version = "5")
-remotes::install_version("Seurat", version = "4.3.0")
-remotes::install_version("png")
-install.packages("png", repos = "https://cran.r-project.org/")
-install.packages("png")
-install.packages('Seurat')
-remotes::install_github("satijalab/seurat", "seurat5", quiet = FALSE)
-
-#remove.packages("png")
-install.packages("reticulate")
-#install.packages("png")
-
 ################################################################################
 ## # Load the object
 ################################################################################
-
 print("Loading the objects - START")
 obj <- LoadH5Seurat(path_to_obj)
 fit <- readRDS(path_to_fit)
@@ -85,7 +75,7 @@ obj@meta.data <- cbind(obj@meta.data, fit$L)
 
 setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/databases")
 SaveH5Seurat(obj,
-             filename="obj_and_topics", 
+             filename= paste0("obj_and_topics_", K),
              overwrite = TRUE)
 ################################################################################
 ## Create folder for all the plots
@@ -124,8 +114,7 @@ ggsave(paste0("structure_plot_clusters", ".pdf"),
 ## FeaturePlot - umap
 ################################################################################
 custom_feature_names <- paste0("k", 1:K)
-
-g<-grid.arrange(grobs=FeaturePlot(object = obj,
+g<-arrangeGrob(grobs=FeaturePlot(object = obj,
             features =custom_feature_names,
             label = TRUE,
             combine = F,
@@ -137,8 +126,7 @@ ggsave("FeaturePlot_topics_distribution_over_clusters.pdf",
        limitsize = FALSE,
        path=path_to_plots,
 )
-
-g<-grid.arrange(grobs=FeaturePlot(object = obj,
+g<-arrangeGrob(grobs=FeaturePlot(object = obj,
                                   features =custom_feature_names,
                                   label = TRUE,
                                   combine = F,
@@ -170,30 +158,7 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
 
 
 
-################################################################################
-## visualize DE
-################################################################################
 
-## Topic Proportion - Matrix L (using UMAP or t-SNE)
-de_le <-readRDS("de_le")
-de_vsnull <- readRDS("de_vsnull")
-
-setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
-for (i in 1:K) {
-  de_le_VlnPlot <- volcano_plot(de_vsnull,
-                                k = K,
-                                labels = colnames(counts)) +
-    labs(title = paste0("DE with LFC=vsnull: k = ", i))
-  
-  ggsave(paste0("DE_with_LFC_VS_null_k_", i, ".pdf"), plot = de_le_VlnPlot)
-}
-
-de_le_VlnPlot
-head(de_le$lfsr,2)
-de_null_VlnPlot <- volcano_plot(de_vsnull,
-                       k = K,
-                       labels = genes$symbol
-                       )
 
 
 
