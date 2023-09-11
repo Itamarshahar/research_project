@@ -30,7 +30,6 @@ if (!requireNamespace("fastTopics", quietly = TRUE)) {
 }
 
 install.packages('remotes')
-
 library(Matrix)
 library(fastTopics)
 library(ggplot2)
