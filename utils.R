@@ -87,3 +87,38 @@ dotplot_topics <- function(obj,
   data <- FetchData(obj, c(topic_columns, group.by))
   dot_plot(data, topic_columns, group.vector = data[[group.by]], ...)
 }
+
+
+
+#' Combine Topics and Metadata in a Seurat Object
+#'
+#' This function combines topics generated from a topic modeling fit and adds them
+#' as columns to the metadata of a Seurat object.
+#'
+#' @param obj A Seurat object.
+#' @param fit A topic modeling fit object.
+#' @param path_to_new_obj Path where the new Seurat object will be saved (optional).
+#'
+#' @return A modified Seurat object with topics added to metadata.
+#'
+#' @examples
+#' # Load your Seurat object and topic modeling fit
+#' seurat_obj <- LoadSeuratObject("path/to/seurat_obj.rds")
+#' lda_fit <- LDA(topic_matrix, ...)
+#'
+#' # Combine topics and metadata
+#' seurat_obj <- combine_topics_and_meta_data(seurat_obj, lda_fit)
+#'
+#' # Optionally, save the modified Seurat object
+#' # combine_topics_and_meta_data(seurat_obj, lda_fit, "path/to/save/")
+#'
+#' @export
+combine_topics_and_meta_data <- function(obj, fit, path_to_new_obj = NULL) {
+  obj@meta.data <- cbind(obj@meta.data, fit$L)
+  if (!is.null(path_to_new_obj)) {
+    SaveH5Seurat(obj,
+                 filename = paste0(path_to_new_obj, "obj_and_topics_", K),
+                 overwrite = TRUE)
+  }
+  return(obj)
+}
