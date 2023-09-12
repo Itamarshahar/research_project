@@ -42,11 +42,33 @@ load_libraries <- function() {
   print("loading libraries finished", "\n")
 
 }
-
-#dir.create(file.path(path_to_plots, paste0("Plots_for_k=", K)))
-#path_to_plots <- paste0(path_to_plots, "/Plots_for_k=", K)
-
-#
+#' Generate Structure Plot for Topics
+#'
+#' This function generates structure plots to visualize the relationship between topics and different groupings
+#' such as cell types, Seurat clusters, and diagnosis.
+#'
+#' @param obj A Seurat object containing the data for plotting.
+#' @param path_to_plots A character string specifying the path where the generated plots will be saved.
+#' @param additional_colors A vector of color values for topics to be used in the plot.
+#' @param K An integer specifying the number of topics to include in the plot.
+#' @param fit The fitted topic model.
+#'
+#' @details The function creates structure plots for each of the specified groupings (cell types, Seurat clusters, and diagnosis)
+#' to visualize how topics are distributed across these groupings. The plots show the relationship between topics (1 to K)
+#' and the specified grouping variable.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#' # Generate structure plots for topics vs. cell types, clusters, and diagnosis
+#' generate_structure_plot(seurat_obj, path_to_plots = "plots", additional_colors = c("blue", "red"), K = 10)
+#'
+#' @seealso
+#' \code{\link{structure_plot}}
+#'
+#' @import Seurat
+#'
 generate_structure_plot<- function (obj = obj,
                         path_to_plots = path_to_plots,
                         additional_colors = additional_colors,
@@ -93,6 +115,33 @@ generate_structure_plot<- function (obj = obj,
          height = 10
   )
 }
+#' Generate UMAP-based Feature Plots
+#'
+#' This function generates UMAP-based feature plots to visualize the expression of custom features
+#' across different topics and split by clusters or cell types.
+#'
+#' @param obj A Seurat object containing the data for plotting.
+#' @param path_to_plots A character string specifying the path where the generated plots will be saved.
+#' @param custom_feature_names A character vector specifying the names of custom features to be visualized.
+#' @param font A character string specifying the font to be used for plot titles.
+#'
+#' @details The function generates two types of feature plots based on UMAP coordinates:
+#' - Feature plot for different topics split by clusters.
+#' - Feature plot for different topics split by cell types.
+#' Each feature plot displays the expression of custom features and labels for the specified features.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#' # Generate UMAP-based feature plots for custom features
+#' generate_umap(seurat_obj, path_to_plots = "plots", custom_feature_names = c("Gene1", "Gene2"), font = "Arial")
+#'
+#' @seealso
+#' \code{\link{FeaturePlot}}, \code{\link{arrangeGrob}}
+#'
+#' @import Seurat
+#'
 generate_umap <- function(obj,
                           path_to_plots,
                           custom_feature_names,
@@ -134,7 +183,29 @@ ggsave(filename = "FeaturePlot_topics_distribution_over_celltype.pdf",
 )
 
 }
-
+#' Generate Dot Plot for Topics vs. Cell Type
+#'
+#' This function generates a dot plot to visualize the relationship between topics and cell types.
+#'
+#' @param obj A Seurat object containing the data for plotting.
+#' @param custom_feature_names A character vector specifying the names of topics or features to plot.
+#'
+#' @details The function creates a dot plot to display the average expression of different topics
+#' across various cell types in the Seurat object. Each dot represents the average expression of a topic
+#' within a specific cell type.
+#'
+#' @return None
+#' @export
+#'
+#' @examples
+#' # Generate a dot plot for topics vs. cell types
+#' generate_DotPlot(seurat_obj, custom_feature_names = c("k1", "k2", "k3"))
+#'
+#' @seealso
+#' \code{\link{dotplot_topics}}
+#'
+#' @import Seurat
+#'
 generate_DotPlot <- function (obj,custom_feature_names ) {
   g<- dotplot_topics(obj  = obj,
                topic_columns=custom_feature_names,
@@ -152,15 +223,15 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
 
 )
 }
+#' Generate Violin Plots
 #'
-#' This function generates one or more violin plots for grouped data using the Seurat package.
+#' This function generates a set of violin plots for grouped data using the Seurat package.
 #'
 #' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
+#' @param path_to_plots A character string specifying the path where the generated plots will be saved.
 #' @param group_by_param A character string specifying the variable by which to group the data for plotting.
 #' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
-#' @param complex_case_text A character string (optional) for indiprinting a complex case in plot titles.
+#' @param complex_case_text A character string (optional) for incorporating a complex case in plot titles.
 #'
 #' @details The function generates violin plots for specified groups or clusters in the input Seurat object (`obj`).
 #' Each group specified in `group_by_param` will be represented as a separate panel in the output plot.
@@ -170,13 +241,13 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
 #'
 #' @examples
 #' # Generate violin plots for Seurat clusters
-#' plot_vln(seurat_obj, "path/to/plots", "seurat_clusters", K = 10, LFC_type = "le")
+#' plot_Vln(seurat_obj, "path/to/plots", "seurat_clusters", K = 10, complex_case_text = "ComplexCase")
 #'
 #' # Generate violin plots for other variables
-#' plot_vln(seurat_obj, "path/to/plots", "Diagnosis", K = 10, LFC_type = "le")
+#' plot_Vln(seurat_obj, "path/to/plots", "Diagnosis", K = 10)
 #'
 #' @seealso
-#' \code{\link{generate_vln_plot}}, \code{\link{generate_vln_plot_complex}}
+#' \code{\link{generate_VlnPlot}}, \code{\link{generate_vln_plot_complex}}
 #'
 #' @import Seurat
 #'
@@ -207,32 +278,7 @@ plot_Vln <- function(obj,
          width = 15,
          height = K*2.5)
 }
-#' Generate Multiple Violin Plots
-#'
-#' This function generates a set of violin plots for different grouping variables.
-#'
-#' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
-#' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
-#'
-#' @details The function calls `plot_vln` with different grouping variables to generate multiple violin plots.
-#'
-#' @return None
-#' @export
-#'
-#' @examples
-#' # Generate multiple violin plots
-#' generate_vln_plot(seurat_obj, "path/to/plots", K = 10, LFC_type = "le")
-#'
-#' @seealso
-#' \code{\link{plot_vln}}, \code{\link{generate_vln_plot_complex}}
-#'
-#' @import Seurat
-#'
 generate_VlnPlot <- function(obj, path_to_plots, K=10) {
-  print(K)
-  #print("Generating Violin Plots...", "K=", as.integer(K))
   plot_Vln(obj,
            path_to_plots,
            "seurat_clusters",
@@ -258,27 +304,25 @@ generate_VlnPlot <- function(obj, path_to_plots, K=10) {
   print("Done with Violin Plots...")
 
 }
-#' Generate Violin Plots for Complex Cases
+#' Generate Multiple Violin Plots
 #'
-#' This function generates a set of violin plots for complex cases in differential expression analysis.
+#' This function generates a set of violin plots for different grouping variables using the Seurat package.
 #'
 #' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
+#' @param path_to_plots A character string specifying the path where the generated plots will be saved.
 #' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
 #'
-#' @details The function generates violin plots for complex cases by grouping the data based on the "Diagnosis" variable.
-#' It creates separate plots for each complex case specified in the "Diagnosis" variable and saves them with appropriate titles.
+#' @details The function calls the `plot_Vln` function for different grouping variables to generate multiple violin plots.
 #'
 #' @return None
 #' @export
 #'
 #' @examples
-#' # Generate violin plots for complex cases
-#' generate_vln_plot_complex(seurat_obj, "path/to/plots", K = 10, LFC_type = "le")
+#' # Generate multiple violin plots
+#' generate_VlnPlot(seurat_obj, "path/to/plots", K = 10)
 #'
 #' @seealso
-#' \code{\link{plot_vln}}, \code{\link{generate_vln_plot}}
+#' \code{\link{plot_Vln}}, \code{\link{generate_vln_plot_complex}}
 #'
 #' @import Seurat
 #'
@@ -335,6 +379,7 @@ generate_vln_plot_complex <- function(obj,path_to_plots, K=10) {
   print("Done with Violin Plots...")
 
 }
+
 get_qualitative_colors <- function(n) {
   qual_col_pals = brewer.pal.info[brewer.pal.info$printegory == 'qual',]
   col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
