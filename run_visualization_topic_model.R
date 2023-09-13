@@ -1,20 +1,19 @@
-
 ################################################################################
 ## This script suppose to run the flow of the topics.
 ################################################################################
-args = commandArgs(trailingOnly=TRUE)
+args = commandArgs(trailingOnly = TRUE)
 
 if (length(args) != 3) {
   stop("please provide 3 args: <path_to_obj> <path_to_fit> <path_to_plots>", args)
-  
+
 } else {
-path_to_obj <- args[1] # Seurat obj
-path_to_fit <- args[2] # RDS obj
-path_to_plots <- args[3]
+  path_to_obj <- args[1] # Seurat obj
+  path_to_fit <- args[2] # RDS obj
+  path_to_plots <- args[3]
 }
 
 load_libraries <- function() {
-  print("loading libraries\n")
+  print("loading libraries")
   if (!requireNamespace("remotes", quietly = TRUE)) {
     install.packages("remotes", repos = "http://cran.us.r-project.org")
   }
@@ -39,9 +38,12 @@ load_libraries <- function() {
   library(dplyr)
   library(grid)
   source("utils.R")
-  print("loading libraries finished", "\n")
+  library(ComplexHeatmap)
+  library(circlize)
+  print("loading libraries finished")
 
 }
+
 #' Generate Structure Plot for Topics
 #'
 #' This function generates structure plots to visualize the relationship between topics and different groupings
@@ -69,11 +71,11 @@ load_libraries <- function() {
 #'
 #' @import Seurat
 #'
-generate_structure_plot<- function (obj = obj,
-                        path_to_plots = path_to_plots,
-                        additional_colors = additional_colors,
-                        K = K,
-                        fit = fit
+generate_structure_plot <- function(obj = obj,
+                                    path_to_plots = path_to_plots,
+                                    additional_colors = additional_colors,
+                                    K = K,
+                                    fit = fit
 )
 {
   structure_plot(fit,
@@ -81,11 +83,11 @@ generate_structure_plot<- function (obj = obj,
                  colors = additional_colors,
                  gap = 25,
                  grouping = obj$celltype,
-                 )
+  )
 
   ggsave(paste0("structure_plot_celltype", ".pdf"),
          limitsize = FALSE,
-         path=path_to_plots,
+         path = path_to_plots,
          width = 15,
          height = 10
   )
@@ -97,8 +99,8 @@ generate_structure_plot<- function (obj = obj,
   )
   ggsave(paste0("structure_plot_clusters", ".pdf"),
          limitsize = FALSE,
-         path=path_to_plots,
-        width = 15,
+         path = path_to_plots,
+         width = 15,
          height = 10
   )
   structure_plot(fit,
@@ -106,15 +108,16 @@ generate_structure_plot<- function (obj = obj,
                  colors = additional_colors,
                  gap = 25,
                  grouping = obj$Diagnosis,
-                 )
+  )
 
   ggsave(paste0("structure_plot_diagnosis", ".pdf"),
          limitsize = FALSE,
-         path=path_to_plots,
+         path = path_to_plots,
          width = 15,
          height = 10
   )
 }
+
 #' Generate UMAP-based Feature Plots
 #'
 #' This function generates UMAP-based feature plots to visualize the expression of custom features
@@ -149,40 +152,41 @@ generate_umap <- function(obj,
 
   title_clusters <- "Cell expresison in different topics splitted by clusters"
   g <- arrangeGrob(grobs = FeaturePlot(object = obj,
-                                         features = custom_feature_names,
-                                         label = TRUE,
-                                         combine = F,
-                                         label.size = 8,
-    ),
-   top = textGrob(title_clusters,gp=gpar(fontsize=40,font=font))
+                                       features = custom_feature_names,
+                                       label = TRUE,
+                                       combine = F,
+                                       label.size = 8,
+  ),
+                   top = textGrob(title_clusters, gp = gpar(fontsize = 40, font = font))
   )
   ggsave(filename = "FeaturePlot_topics_distribution_over_clusters.pdf",
-           plot = g,
-           width = 35,
-           height = 25,
-           limitsize = FALSE,
-           path = path_to_plots,
-  )
-  title_celltype <- "Cell expresison in different topics splitted by cell type"
-  g <- arrangeGrob(grobs = FeaturePlot(object = obj,
-                                         features = custom_feature_names,
-                                         label = TRUE,
-                                         combine = F,
-                                         label.size = 8,
-                                        split.by = "celltype",
-
-    ),
-   top = textGrob(title_celltype,gp=gpar(fontsize=40,font=font))
-  )
-ggsave(filename = "FeaturePlot_topics_distribution_over_celltype.pdf",
          plot = g,
          width = 35,
          height = 25,
          limitsize = FALSE,
          path = path_to_plots,
-)
+  )
+  title_celltype <- "Cell expresison in different topics splitted by cell type"
+  g <- arrangeGrob(grobs = FeaturePlot(object = obj,
+                                       features = custom_feature_names,
+                                       label = TRUE,
+                                       combine = F,
+                                       label.size = 8,
+                                       split.by = "celltype",
+
+  ),
+                   top = textGrob(title_celltype, gp = gpar(fontsize = 40, font = font))
+  )
+  ggsave(filename = "FeaturePlot_topics_distribution_over_celltype.pdf",
+         plot = g,
+         width = 35,
+         height = 25,
+         limitsize = FALSE,
+         path = path_to_plots,
+  )
 
 }
+
 #' Generate Dot Plot for Topics vs. Cell Type
 #'
 #' This function generates a dot plot to visualize the relationship between topics and cell types.
@@ -206,23 +210,58 @@ ggsave(filename = "FeaturePlot_topics_distribution_over_celltype.pdf",
 #'
 #' @import Seurat
 #'
-generate_DotPlot <- function (obj,custom_feature_names ) {
-  g<- dotplot_topics(obj  = obj,
-               topic_columns=custom_feature_names,
-               group.by = "celltype",
-               alpha.threshold=0.01,
-               order=F,
-              )  + labs(y = "Topics", x = "Cell Type", title = "Cells Type and the Average Expression of Over Different Topics ")
+generate_DotPlot <- function(obj, custom_feature_names, path_to_plots) {
+  g_cell_type <- dotplot_topics(obj = obj,
+                                topic_columns = custom_feature_names,
+                                group.by = "celltype",
+                                alpha.threshold = 0.01,
+                                order = F,
+  ) &
+    RotatedAxis() &
+    labs(y = "Topics", x = "Cell Type", title = "Cells Type and the Average Expression of Over Different Topics")
 
-ggsave("DotPlot_topics_vs_celltype.pdf",
-       plot = g,
-       limitsize = FALSE,
-       path=path_to_plots,
-        width = 15,
-         height = 10
+  g_Age <- dotplot_topics(obj = obj,
+                          topic_columns = custom_feature_names,
+                          group.by = "Age",
+                          alpha.threshold = 0.01,
+                          order = F,
+  ) + labs(y = "Topics", x = "Age", title = "Age and the Average Expression of Over Different Topics ") & RotatedAxis()
 
-)
+  g_Diagnosis <- dotplot_topics(obj = obj,
+                                topic_columns = custom_feature_names,
+                                group.by = "Diagnosis",
+                                alpha.threshold = 0.01,
+                                order = F,
+  ) + labs(y = "Topics", x = "Diagnosis", title = "Diagnosis and the Average Expression of Over Different Topics ") & RotatedAxis()
+
+
+  g_SampleID <- dotplot_topics(obj = obj,
+                               topic_columns = custom_feature_names,
+                               group.by = "SampleID",
+                               alpha.threshold = 0.01,
+                               order = F,
+  ) &
+    labs(y = "Topics", x = "SampleID", title = "SampleID and the Average Expression of Over Different Topics ") &
+    RotatedAxis()
+
+  g_seurat_clusters <- dotplot_topics(obj = obj,
+                                      topic_columns = custom_feature_names,
+                                      group.by = "seurat_clusters",
+                                      alpha.threshold = 0.01,
+                                      order = F,
+  ) + labs(y = "Topics", x = "seurat_clusters", title = "seurat_clusters and the Average Expression of Over Different Topics ") & RotatedAxis()
+  plot_grid(g_cell_type, g_Age, g_Diagnosis, g_SampleID, g_seurat_clusters, nrow = 5, ncol = 1)
+  ggsave("DotPlot_topics_vs_different_features.pdf",
+         #plot = g_all,
+         limitsize = FALSE,
+         path = path_to_plots,
+         width = 15,
+         height = 30
+
+  )
+
 }
+
 #' Generate Violin Plots
 #'
 #' This function generates a set of violin plots for grouped data using the Seurat package.
@@ -254,17 +293,18 @@ ggsave("DotPlot_topics_vs_celltype.pdf",
 plot_Vln <- function(obj,
                      path_to_plots,
                      group_by_param,
-                     K=10,
-                     complex_case_text=NA )
-  {
+                     K = 10,
+                     complex_case_text = NA)
+{
   de_VlnPlot <- list()
-  #K <- as.integer(K)
   for (i in 1:K) {
     de_VlnPlot[[i]] <- VlnPlot(obj,
                                features = paste0("k", i),
                                pt.size = 0,
                                group.by = group_by_param) +
-      NoLegend() + labs(x = NULL) + theme(axis.text.x = element_text(size = 8))
+      NoLegend() +
+      labs(x = NULL) +
+      theme(axis.text.x = element_text(size = 8))
   }
   combined_plot <- arrangeGrob(grobs = de_VlnPlot,
                                ncol = 1,
@@ -274,11 +314,12 @@ plot_Vln <- function(obj,
     group_by_param <- paste0(group_by_param, "_", complex_case_text)
   }
   ggsave(combined_plot,
-         file = paste0(path_to_plots ,"/VlnPlot-",group_by_param, ".pdf"),
+         file = paste0(path_to_plots, "/VlnPlot-", group_by_param, ".pdf"),
          width = 15,
-         height = K*2.5)
+         height = K * 2.5)
 }
-generate_VlnPlot <- function(obj, path_to_plots, K=10) {
+
+generate_VlnPlot <- function(obj, path_to_plots, K = 10) {
   plot_Vln(obj,
            path_to_plots,
            "seurat_clusters",
@@ -304,6 +345,7 @@ generate_VlnPlot <- function(obj, path_to_plots, K=10) {
   print("Done with Violin Plots...")
 
 }
+
 #' Generate Multiple Violin Plots
 #'
 #' This function generates a set of violin plots for different grouping variables using the Seurat package.
@@ -326,127 +368,131 @@ generate_VlnPlot <- function(obj, path_to_plots, K=10) {
 #'
 #' @import Seurat
 #'
-generate_vln_plot_complex <- function(obj,path_to_plots, K=10) {
+generate_vln_plot_complex <- function(obj, path_to_plots, K = 10) {
   print("Generating Violin Plots Complex Case ...")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == "AD"),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "AD") # Violin plot to only AD grouping by celltype
 
   plot_Vln(subset(x = obj, subset = Diagnosis == "MCI"),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "MCI")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == "Young CTRL"),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "YoungCTRL")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == "HA"),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "HA")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == "SuperAgers"),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "SuperAgers")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == c("SuperAgers", "HA", "Young CTRL")),
            path_to_plots,
            group_by_param = "celltype",
-           K=K,
+           K = K,
            complex_case_text = "SuperAgers&HA&YoungCTRL")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == c("SuperAgers", "HA")),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "SuperAgers&HA")
 
   plot_Vln(subset(x = obj, subset = Diagnosis == c("AD", "MCI")),
            path_to_plots,
            "celltype",
-           K=K,
+           K = K,
            complex_case_text = "AD&MCI")
   print("Done with Violin Plots...")
 
 }
 
 get_qualitative_colors <- function(n) {
-  qual_col_pals = brewer.pal.info[brewer.pal.info$printegory == 'qual',]
+  library(RColorBrewer)
+  qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
   col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-  return (col_vector[1:n])
+  return(col_vector[1:n])
 }
-load_objects <- function(path_to_fit, path_to_obj){
-   # load objects
+
+load_objects <- function(path_to_fit, path_to_obj) {
+  # load objects
   print("Loading the objects - START")
   obj <- LoadH5Seurat(path_to_obj)
-  fit  <-readRDS(path_to_fit)
+  fit <- readRDS(path_to_fit)
   print("Loading the objects - FINISH")
 
-  return (list(obj = obj, fit = fit))
+  return(list(obj = obj, fit = fit))
 }
-run_main_flow <- function (obj, fit) {
+
+run_main_flow <- function(obj, fit, path_to_plots) {
   load_libraries()
-  font <- "Helvetica"
+  font <- "Conqueror Sans Medium"
 
 
   obj <- combine_topics_and_meta_data(obj = obj, fit = fit)
-  K <- dim(fit$L)[2]
+  K <- as.integer(dim(fit$L)[2])
   all_K <- paste0("k", 1:K)
 
   additional_colors <- get_qualitative_colors(K)
-
-  print(paste0("The number of Topics are: ", K), "\n")
+  generate_DotPlot(obj = obj,
+                   custom_feature_names = all_K,
+                   path_to_plots = path_to_plots)
+  print("Generating structure_plot...")
+  print(additional_colors)
   generate_structure_plot(obj = obj,
-                        path_to_plots = path_to_plots,
-                        additional_colors = additional_colors,
-                        K = K,
-                        fit = fit)
-  print("Generating UMAP...\n")
-  # generate_umap(obj = obj,
-  #               path_to_plots= path_to_plots,
-  #               custom_feature_names=all_K,
-  # )
-  print("Finish UMAP...\n")
+                          path_to_plots = path_to_plots,
+                          additional_colors = additional_colors,
+                          K = K,
+                          fit = fit)
+  print("Finish structure_plot... ")
+
+  print("Generating UMAP...")
+  generate_umap(obj = obj,
+                path_to_plots = path_to_plots,
+                custom_feature_names = all_K,
+  )
+  print("Finish UMAP...")
+  print("Generating VlnPlot...")
 
   generate_VlnPlot(obj = obj,
                    path_to_plots = path_to_plots,
-                   K=K)
+                   K = K)
 
   generate_vln_plot_complex(obj = obj,
                             path_to_plots = path_to_plots,
-                            K=K)
-  generate_DotPlot (obj = obj,
-                    custom_feature_names=all_K )
+                            K = K)
 
-
-  print("visualize the plans (topics) for each cell")
-
-
-  print(paste0("The Run is Finished. The Plots are saved at: ",path_to_plots))
+  print("Finish VlnPlot...")
+  print(paste0("The Run is Finished. The Plots are saved at: ", path_to_plots))
 
 }
 
 
 main <- function() {
-  #load_libraries()## local run - REMOVE before running in the cluster
-  path_to_fit <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects/fitted_topic_model_k_15.rds"
-  path_to_obj <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects/five_prec.h5seurat"
-  path_to_plots <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/k15/plots"
+  path_to_fit <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/k10/objects/fitted_k_10.rds"
+  path_to_obj <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/objects/five_prec.h5seurat"
+  path_to_plots <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/k10/plots"
+
   load_libraries()
   loads <- load_objects(path_to_fit, path_to_obj)
   obj <- loads$obj
   fit <- loads$fit
-  run_main_flow(obj, fit)
+  run_main_flow(obj, fit, path_to_plots)
 }
 
 main()

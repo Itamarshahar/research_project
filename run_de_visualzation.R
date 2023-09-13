@@ -32,9 +32,9 @@ load_libraries <- function() {
   source("utils.R")
   library(grid)
   library(viridisLite)
+
+
 }
-
-
 
 # Global variables  --------------------------------------------------------
 font <- "Arial"
@@ -42,9 +42,9 @@ additional_colors <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c",
                        "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00",
                        "#cab2d6", "#6a3d9a")
 # Optional Part (see doc) -------------------------------------------------
-# This is temp processes. While running the flow few rows (0 rows) of the 
-#obj@meta.data we removed as part of the flow, this rows (0 rows) 
-#where NOT remove from the Counts Matrix and therefore need to be removed 
+# This is temp processes. While running the flow few rows (0 rows) of the
+#obj@meta.data we removed as part of the flow, this rows (0 rows)
+#where NOT remove from the Counts Matrix and therefore need to be removed
 remove_zeros_from_counts_mat <- function(obj)
 {
   counts <- obj@assays$RNA@counts
@@ -97,208 +97,6 @@ generate_VolcanoPlot <- function(de, path_to_plot, counts, K=10, LFC_type="le") 
 }
 
 
-# VlnPlot -----------------------------------------------------------------
-
-##' Generate Violin Plot(s) for Grouped Data
-#'
-#' This function generates one or more violin plots for grouped data using the Seurat package.
-#'
-#' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
-#' @param group_by_parm A character string specifying the variable by which to group the data for plotting.
-#' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
-#' @param complex_case_text A character string (optional) for indicating a complex case in plot titles.
-#'
-#' @details The function generates violin plots for specified groups or clusters in the input Seurat object (`obj`).
-#' Each group specified in `group_by_parm` will be represented as a separate panel in the output plot.
-#' 
-#' @return None
-#' @export
-#' 
-#' @examples
-#' # Generate violin plots for Seurat clusters
-#' plot_vln(seurat_obj, "path/to/plots", "seurat_clusters", K = 10, LFC_type = "le")
-#' 
-#' # Generate violin plots for other variables
-#' plot_vln(seurat_obj, "path/to/plots", "Diagnosis", K = 10, LFC_type = "le")
-#' 
-#' @seealso
-#' \code{\link{generate_vln_plot}}, \code{\link{generate_vln_plot_complex}}
-#' 
-#' @import Seurat
-#' 
-plot_vln <- function(obj,
-                     path_to_plot,
-                     group_by_parm,
-                     K=10 ,
-                     LFC_type="le",
-                     complex_case_text=NA ) 
-  {
-  
-  de_VlnPlot <- list()
-  K <- as.integer(K)
-  for (i in 1:K) {
-    de_VlnPlot[[i]] <- VlnPlot(obj,
-                               features = paste0("k", i),
-                               pt.size = 0,
-                               group.by = group_by_parm) +
-      NoLegend() + labs(x = NULL) + theme(axis.text.x = element_text(size = 8))
-  }
-  combined_plot <- arrangeGrob(grobs = de_VlnPlot,
-                               ncol = 2,
-                               nrow = 5,
-  )
-  if (!is.na(complex_case_text)) {
-    group_by_parm <- paste0(group_by_parm, "_", complex_case_text)
-  }
-  ggsave(combined_plot, 
-         file = paste0(path_to_plot ,"VlnPlot-", "LFC_TYPE_",LFC_type,group_by_parm, ".pdf"),
-         width = 15,
-         height = 10)
-}
-
-#' Generate Multiple Violin Plots
-#'
-#' This function generates a set of violin plots for different grouping variables.
-#'
-#' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
-#' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
-#'
-#' @details The function calls `plot_vln` with different grouping variables to generate multiple violin plots.
-#' 
-#' @return None
-#' @export
-#' 
-#' @examples
-#' # Generate multiple violin plots
-#' generate_vln_plot(seurat_obj, "path/to/plots", K = 10, LFC_type = "le")
-#' 
-#' @seealso
-#' \code{\link{plot_vln}}, \code{\link{generate_vln_plot_complex}}
-#' 
-#' @import Seurat
-#' 
-generate_vln_plot <- function(obj,path_to_plot, K=10, LFC_type="le") {
-  print("Generating Violin Plots...")
-  plot_vln(obj, 
-           path_to_plot, 
-           "seurat_clusters",  
-           K=10, 
-           LFC_type="le")  # Violin plot grouping by Seurat clusters
-  plot_vln(obj,
-           path_to_plot,  
-           "Diagnosis",  
-           K=10, 
-           LFC_type="le")       # Violin plot grouping by Diagnosis
-  plot_vln(obj, 
-           path_to_plot, 
-           "celltype",  
-           K=10, 
-           LFC_type="le")        # Violin plot grouping by cell type
-  plot_vln(obj,
-           path_to_plot,
-           "SampleID",
-           K=10,
-           LFC_type="le")        # Violin plot grouping by SampleID
-  plot_vln(obj, 
-           path_to_plot,
-           "Age",  
-           K=10,
-           LFC_type="le") # Violin plot grouping by Age
-
-  
-  print("Done with Violin Plots...")
-  
-}
-#' Generate Violin Plots for Complex Cases
-#'
-#' This function generates a set of violin plots for complex cases in differential expression analysis.
-#'
-#' @param obj A Seurat object containing the data for plotting.
-#' @param path_to_plot A character string specifying the path where the generated plots will be saved.
-#' @param K An integer specifying the number of violin plots to generate.
-#' @param LFC_type A character string specifying the log-fold change (LFC) type for plotting.
-#'
-#' @details The function generates violin plots for complex cases by grouping the data based on the "Diagnosis" variable.
-#' It creates separate plots for each complex case specified in the "Diagnosis" variable and saves them with appropriate titles.
-#' 
-#' @return None
-#' @export
-#' 
-#' @examples
-#' # Generate violin plots for complex cases
-#' generate_vln_plot_complex(seurat_obj, "path/to/plots", K = 10, LFC_type = "le")
-#' 
-#' @seealso
-#' \code{\link{plot_vln}}, \code{\link{generate_vln_plot}}
-#' 
-#' @import Seurat
-#' 
-
-generate_vln_plot_complex <- function(obj,path_to_plot, K=10, LFC_type="le") {
-  print("Generating Violin Plots Complex Case ...")
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == "AD"),
-           path_to_plot, 
-           "celltype",  
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "AD") # Violin plot to only AD grouping by celltype
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == "MCI"),
-           path_to_plot,
-           "celltype",
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "MCI")
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == "Young CTRL"), 
-           path_to_plot, 
-           "celltype",  
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "YoungCTRL") 
-
-  plot_vln(subset(x = obj, subset = Diagnosis == "HA"),
-           path_to_plot,
-           "celltype", 
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "HA") 
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == "SuperAgers"),
-           path_to_plot, 
-           "celltype", 
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "SuperAgers") 
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == c("SuperAgers", "HA", "Young CTRL")),
-           path_to_plot, 
-           "celltype", 
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "SuperAgers&HA&YoungCTRL")
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == c("SuperAgers", "HA")),
-           path_to_plot, 
-           "celltype", 
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "SuperAgers&HA")
-  
-  plot_vln(subset(x = obj, subset = Diagnosis == c("AD", "MCI")),
-           path_to_plot, 
-           "celltype", 
-           K=10,
-           LFC_type="le", 
-           complex_case_text = "AD&MCI")
-  print("Done with Violin Plots...")
-  
-}
 
 # Find Markers ------------------------------------------------------------
 significant_genes <- list()
@@ -354,10 +152,10 @@ main <- function(){
                        K=as.integer(K), 
                        LFC_type =LFC_type)
   
-  generate_vln_plot(obj = obj,
-                    path_to_plot = path_to_plot, 
-                    LFC_type = LFC_type,
-                    K=as.integer(K))
+  generate_VlnPlot(obj = obj,
+                   path_to_plot = path_to_plot,
+                   LFC_type = LFC_type,
+                   K=as.integer(K))
   
   generate_vln_plot_complex(obj = obj,
                             path_to_plot = path_to_plot, 
@@ -370,5 +168,113 @@ main <- function(){
 
 main()
 
+##### sandbox  ####
 
 
+
+
+
+load_libraries()
+
+# from matrix de$postmean, get the top 100 genes (Accoridng to the val in col5)
+# and save them in a list
+total <- 100
+topic <- 3
+pattern <- "^AL"
+
+top_100 <- de$postmean[order(de$postmean[,topic], decreasing = TRUE),][1:total,]
+top_100_topic3 <- de$postmean[order(de$postmean[,3], decreasing = TRUE),][1:total,]
+top_100_topic5 <- de$postmean[order(de$postmean[,3], decreasing = TRUE),][1:total,]
+start_with_AC_topic_3 <- rownames(top_100_topic3)[grepl(pattern, rownames(top_100_topic3))]
+start_with_AC_topic_5 <- rownames(top_100_topic5)[grepl(pattern, rownames(top_100_topic5))]
+# removing all the col but k5
+inter <- intersect(start_with_AC_topic_3, start_with_AC_topic_5)
+union <- union(start_with_AC_topic_3, start_with_AC_topic_5)
+length(inter)
+length(union)
+
+top_100 <- data.frame(top_100[,topic])
+colnames(top_100) <- c("k5")
+
+# count how many col in top_100 staring with "AL"
+
+start_with_AC_ <-
+# list of all the row names in top_100 staring with "AC"
+
+
+
+
+prec_start_with_AL <-(sum(grepl("^AL", rownames(top_100))))/total
+prec_start_with_LI <-sum(grepl("^LI", rownames(top_100)))/total
+prec_start_with_ST <-sum(grepl("^ST", rownames(top_100)))/total
+prec_start_with_TT <-sum(grepl("^TT", rownames(top_100)))/total
+prec_start_with_LIN <-sum(grepl("^LIN", rownames(top_100)))/total
+prec_start_with_AP <-sum(grepl("^AP", rownames(top_100)))/total
+prec_start_with_BEX <-sum(grepl("^BEX", rownames(top_100)))/total
+
+sum(prec_start_with_AP, prec_start_with_LIN, prec_start_with_AL, prec_start_with_AC, prec_start_with_LI, prec_start_with_ST, prec_start_with_TT)/2
+
+K <- 10
+significant_genes <- list()
+genes <- rownames(de$lfsr)
+markers <- intersect(genes[de$lfsr[, 5] < 0.001], genes[de$postmean[, 5] > 3])
+k_5 <- fit$F[,markers]
+
+# significant_genes <- append(significant_genes, list(markers))
+
+
+
+# (Still working on it) Find Markers of Clusters  -----------------------------------------------
+
+obj_markers <- FindAllMarkers(object = obj,
+                              only.pos = TRUE,
+                              min.pct=.25)
+
+
+obj_markers_with_cell_type <- obj_markers %>% 
+  #group_by(cluster) %>% 
+  mutate(celltype = case_when(
+  cluster %in% c(0, 1) ~ "Mature_oligodendrocytes",
+  cluster == 2 ~ "Astrocytes",
+  cluster %in% c(3, 5, 7, 8, 9) ~ "Neurons",
+  cluster == 4 ~ "Microglia",
+  cluster == 6 ~ "OPC",
+  cluster == 10 ~ "vascular",
+  cluster == 11 ~ "Astrocytes"#,
+  #TRUE ~ NA_character_
+))
+
+
+obj_markers_with_cell_type1 <- obj_markers_with_cell_type %>% group_by(cluster) %>% slice_max(n = 100, order_by = avg_log2FC)
+obj_markers_with_cell_type_top10 <- obj_markers_with_cell_type1 %>%
+  group_by(cluster) %>% 
+  slice_max(n = 10, order_by = avg_log2FC)
+
+
+
+
+
+################################################################################
+## visualize DE
+################################################################################
+
+## Topic Proportion - Matrix L (using UMAP or t-SNE)
+de_le <-readRDS("de_le")
+de_vsnull <- readRDS("de_vsnull")
+
+setwd("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/3rd_year_project2/plots")
+for (i in 1:K) {
+  de_le_VlnPlot <- volcano_plot(de_vsnull,
+                                k = K,
+                                labels = colnames(counts)) +
+    labs(title = paste0("DE with LFC=vsnull: k = ", i))
+
+  ggsave(paste0("DE_with_LFC_VS_null_k_", i, ".pdf"), plot = de_le_VlnPlot)
+}
+
+de_le_VlnPlot
+head(de_le$lfsr,2)
+de_null_VlnPlot <- volcano_plot(de_vsnull,
+                       k = K,
+                       labels = genes$symbol
+                       )
