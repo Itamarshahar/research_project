@@ -77,7 +77,7 @@ dot_plot <- function(data,
          color=paste0('mean x > ', mean_threshold)) +
     coord_flip()
   if (do.return.order){return(columns[hclustering$order])}
-  return(P)
+  return(P )
 }
 
 dotplot_topics <- function(obj,
@@ -122,3 +122,63 @@ combine_topics_and_meta_data <- function(obj, fit, path_to_new_obj = NULL) {
   }
   return(obj)
 }
+
+
+
+
+claculate_correlation <- function(mat1, mat2, reorder = TRUE, method = 'pearson', ignore_missing_rows = TRUE) {
+  # We we want to get a distance matrix in order to run hclust on it.
+  # So we compare the correlation between all the topics even from the same fit
+
+  colnames(mat1) <- paste("1", colnames(mat1), sep = "_")
+  colnames(mat2) <- paste("2", colnames(mat2), sep = "_")
+
+  if (ignore_missing_rows && nrow(mat1) != nrow(mat2)) {
+    common_rownames <- intersect(rownames(mat1), rownames(mat2))
+    message("Correlation between ", length(common_rownames), " rows")
+    mat1 <- mat1[common_rownames,]
+    mat2 <- mat2[common_rownames,]
+  }
+
+  mat <- cbind(mat1, mat2)
+  correlation <- cor(mat, mat, method = method)
+
+  if (isTRUE(reorder) && !matrixcalc::is.square.matrix(correlation)) {
+    warning("Reorder isn't supported on non square correlation matrix")
+    reorder <- FALSE
+  }
+
+  if (isTRUE(reorder)) {
+    hclustering <- hclust(as.dist((1-correlation) / 2) , method='ward.D2')
+    correlation <- correlation[hclustering$order, hclustering$order]
+  }
+
+  # remove unwanted correlations between topics from the same fit
+  correlation <- correlation[!colnames(correlation)  %in% colnames(mat1),
+                             !colnames(correlation)  %in% colnames(mat2)]
+
+  colnames(correlation) <- gsub("^1_", "", colnames(correlation))
+  rownames(correlation) <- gsub("^2_", "", rownames(correlation))
+  return (correlation)
+}
+
+
+HeatmapHelper_add_values_to_display <- function(correlation, OnlyPositive = FALSE) {
+  if (OnlyPositive == TRUE) {
+
+    cell_fun = function(j, i, x, y, width, height, fill) {
+    {
+      if (correlation[i, j] > 0)
+        grid.text(sprintf("%.2f", correlation[i, j]), x, y, gp = gpar(fontsize = 10, fontfamily = 'Helvetica')) }
+    }
+  }
+  else {
+
+    cell_fun = function(j, i, x, y, width, height, fill) {
+    {
+      grid.text(sprintf("%.1f", correlation[i, j]), x, y, gp = gpar(fontsize = 10, fontfamily = 'Helvetica')) }
+    }
+
+  }
+
+  return(cell_fun) }
