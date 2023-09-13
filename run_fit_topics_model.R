@@ -1,7 +1,6 @@
 args = commandArgs(trailingOnly=TRUE)
-
 if (length(args) != 5) {
-  cat(" please provide 5 args: <path_to_the_input_data> <path_to_output_data> <K> <NC> <TRANSPOS(1/0)>")
+  stop("please provide 5 args: <path_to_the_input_data> <path_to_output_data> <K> <NC> <TRANSPOS(1/0)>")
 } else {
   input_path <- args[1]
   output_path <- args[2]
@@ -9,15 +8,31 @@ if (length(args) != 5) {
   NC <- as.integer(args[4])
   TRANSPOSE <-as.integer(args[5])
 }
+input_path <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects/five_prec.h5seurat"
+output_path <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/objects"
+  K <- 15
+  NC <- 4
+  TRANSPOSE <-1
 
 if (!requireNamespace("fastTopics", quietly = TRUE)) {
   # Install the package
   install.packages("fastTopics", repos = cran_mirror)
 }
+cat(length(args))
+
 library(Matrix)
 library(fastTopics)
 library(ggplot2)
 library(cowplot)
+if (!requireNamespace("Seurat", quietly = TRUE)
+){
+  # Install the package
+  install.packages("Seurat", dependencies = TRUE, repos='http://cran.rstudio.com/')
+}
+
+library(Seurat)
+library(SeuratDisk)
+
 set.seed(1)
 obj <- LoadH5Seurat(input_path)
 
