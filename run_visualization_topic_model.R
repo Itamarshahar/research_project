@@ -1,16 +1,16 @@
 ################################################################################
 ## This script suppose to run the flow of the topics.
 ################################################################################
-args = commandArgs(trailingOnly = TRUE)
-
-if (length(args) != 3) {
-  stop("please provide 3 args: <path_to_obj> <path_to_fit> <path_to_plots>", args)
-
-} else {
-  path_to_obj <- args[1] # Seurat obj
-  path_to_fit <- args[2] # RDS obj
-  path_to_plots <- args[3]
-}
+# args = commandArgs(trailingOnly = TRUE)
+#
+# if (length(args) != 3) {
+#   stop("please provide 3 args: <path_to_obj> <path_to_fit> <path_to_plots>", args)
+#
+# } else {
+#   path_to_obj <- args[1] # Seurat obj
+#   path_to_fit <- args[2] # RDS obj
+#   path_to_plots <- args[3]
+# }
 
 load_libraries <- function() {
   print("loading libraries")
@@ -40,6 +40,8 @@ load_libraries <- function() {
   source("utils.R")
   library(ComplexHeatmap)
   library(circlize)
+  library(glue)
+  library(stringr)
   print("loading libraries finished")
 
 }
@@ -150,7 +152,7 @@ generate_umap <- function(obj,
                           custom_feature_names,
                           font = "Helvetica") {
 
-  title_clusters <- "Cell expresison in different topics splitted by clusters"
+  title_clusters <- str_to_title("Cell expresison in different topics splitted by clusters", locale = "en")
   g <- arrangeGrob(grobs = FeaturePlot(object = obj,
                                        features = custom_feature_names,
                                        label = TRUE,
@@ -166,7 +168,7 @@ generate_umap <- function(obj,
          limitsize = FALSE,
          path = path_to_plots,
   )
-  title_celltype <- "Cell expresison in different topics splitted by cell type"
+  title_celltype <- str_to_title("Cell expresison in different topics splitted by cell type", locale = "en")
   g <- arrangeGrob(grobs = FeaturePlot(object = obj,
                                        features = custom_feature_names,
                                        label = TRUE,
@@ -478,21 +480,29 @@ run_main_flow <- function(obj, fit, path_to_plots) {
                             K = K)
 
   print("Finish VlnPlot...")
-  print(paste0("The Run is Finished. The Plots are saved at: ", path_to_plots))
+  #print(paste0("The Run is Finished. The Plots are saved at: ", path_to_plots))
 
 }
 
 
-main <- function() {
-  path_to_fit <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/k10/objects/fitted_k_10.rds"
-  path_to_obj <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/objects/five_prec.h5seurat"
-  path_to_plots <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/k10/plots"
-
+run_visualization_topic_model <- function(K = 10){
   load_libraries()
+
+  k_folder <- glue("k",K)
+  obj_folder <- "objects"
+  fit_name <- glue("fitted_k_", K, ".rds")
+  initial_object_name <- "five_prec.h5seurat"
+  plots <- "plots"
+  left_path <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent"
+
+  path_to_fit <- glue("{left_path}/{k_folder}/{obj_folder}/{fit_name}")
+  path_to_obj <- glue("{left_path}/{obj_folder}/{initial_object_name}")
+  path_to_plots <- glue("{left_path}/{k_folder}/{plots}/")
+
   loads <- load_objects(path_to_fit, path_to_obj)
   obj <- loads$obj
   fit <- loads$fit
+
   run_main_flow(obj, fit, path_to_plots)
 }
 
-main()
