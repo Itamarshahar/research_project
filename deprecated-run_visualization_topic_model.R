@@ -318,7 +318,7 @@ plot_Vln <- function(obj,
   ggsave(combined_plot,
          file = paste0(path_to_plots, "/VlnPlot-", group_by_param, ".pdf"),
          width = 15,
-         height = K * 2.5)
+         height = K * 2.4)
 }
 
 generate_VlnPlot <- function(obj, path_to_plots, K = 10) {
