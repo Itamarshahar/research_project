@@ -641,7 +641,7 @@ plot_Vln <- function(obj,
       group_by_param <- paste0(group_by_param, "_", complex_case_text)
     }
     ggsave(combined_plot,
-           file = glue(path_to_plots, "/VlnPlot-", group_by_param, "/split_by_SampleID.pdf"),
+           file = glue(path_to_plots, "VlnPlot_", group_by_param, "_split_by_SampleID.pdf"),
            width = 15,
            height = K * 2.4)
   }
