@@ -55,6 +55,7 @@ rsconnect/
 # files 
 *.pdf
 tmp.R
+desktop.ini
 
-
-
+*.csv
+*.png
