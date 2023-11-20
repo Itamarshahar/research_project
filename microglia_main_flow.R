@@ -15,7 +15,6 @@ load_libraries <- function() {
   library(fastTopics)
   library(cowplot)
 }
-source("~/Desktop/project/research_project/deprecated-run_visualization_topic_model.R")
 
 run_preprocess <- function(obj, path_to_plots) {
   # add the SampleID_Diagnosis column to the meta data
@@ -44,6 +43,7 @@ main <- function(path_to_obj) {
   load_libraries()
   obj <- LoadH5Seurat(path_to_obj)
   #filder microglia
+  source("~/Desktop/project/research_project/fillter_microglia.R")
   obj_subset <- get_filtered_obj(obj, path_to_plots, path_to_objs)
   obj_subset <- run_preprocess(obj_subset)
   # obj_subset <- run_transformation(obj_subset)
