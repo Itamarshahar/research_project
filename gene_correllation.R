@@ -165,7 +165,7 @@ fit <-  readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fit
 obj <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/filtered_microglia.rds")
 plot_progress(fit)
 roi_mic <- LoadH5Seurat("/Volumes/habib-lab/Shared/NextSeq/500/v1.1.objects/microglia.h5Seurat")
-roi_fit_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia_topic_fit.15.RDS")
+roi_fit_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/all_microglia_topic_fit.15.RDS")
 roi_var_fit_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/variable_microglia_topic_fit.15.RDS")
 
 #extract the counts matrix 
@@ -198,7 +198,7 @@ roi_count <- roi_count[,colnames(roi_count) %in% intersection_gene]
 pseudo_inverse <- ginv(t(as.matrix(F.intersection)))
 L_estimated <- as.matrix(roi_count) %*% pseudo_inverse
 
-correlation <- claculate_correlation(as.data.frame(L_estimated) , as.data.frame(L_estimated))
+correlation <- claculate_correlation(L_hat , L_hat)
 Heatmap(correlation,
         cluster_rows = FALSE,
         cluster_columns = FALSE,
@@ -215,3 +215,93 @@ Heatmap(correlation,
 
 loss <- sum(cost(obj_count,fit$Ly,t(fit$Fn), 1e-08 ))
 sum(loglik_size_factors(obj_count,fit$F,fit$L))
+
+intersection_gene <- (intersect(colnames(obj_count), rownames(roi_fit_15$F)))
+roi_fit_15$F <- roi_fit_15$F[rownames(roi_fit_15$F) %in% intersection_gene,]
+obj_count <- obj_count[,colnames(obj_count) %in% intersection_gene]
+
+L_hat <- predict(roi_fit_15, obj_count, numiter = 100)
+new_fit <- project_poisson_nmf(X=obj_count, F=roi_fit_15$F, numiter=100)
+project_poisson_nmf <- function (X, F, numiter, ...) {
+  
+  # Verify that fit0 and X are compatible.
+  n <- nrow(X)
+  k <- ncol(F)
+  if (nrow(F) != ncol(X))
+    stop("fit$F and X do not match; the number of rows of fit$F should ",
+         "equal the number of columns of X")
+  
+  # Fit a Poisson NMF to the data, X, with F fixed.
+  L0 <- matrix(1/k,n,k)
+  rownames(L0) <- rownames(X)
+  colnames(L0) <- colnames(F)
+  fit <- init_poisson_nmf(X,F = F,L = L0)
+  fit <- fit_poisson_nmf(X,fit0 = fit,numiter = numiter,...)
+  return(fit)
+}
+
+helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", correlation_method = "pearson", L500="NA") {
+  extract_k <- function(path_to_fit) {
+    fit <- readRDS(path_to_fit)
+    cat(dim(fit$F)[2], "||")
+    return(list(fit = fit, k = dim(fit$F)[2]))
+  }
+  generate_fits_list <- function(paths) {
+    fits_list <- list()  # Initialize the fits_list
+    
+    for (path in paths) {
+      obj <- extract_k(path)
+      fits_list[[as.character(obj$k)]] <- obj$fit  # Use as.character to ensure k is a character key
+    }
+    return(fits_list)
+  }
+  generate_all_permutations <- function(lst) {
+    # Initialize an empty vector to store the permutations
+    all_permutations <- character(0)
+    
+    # Generate all permutations 
+    for (i in 1:length(lst)) {
+      all_permutations <- c(all_permutations, paste(lst[i]))
+    }
+    return(all_permutations)
+  }
+  print(glue("Running topic evaluation flow for {type} and {correlation_method}"))
+  col_fun = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
+  col_fun(seq(-20, 20))
+  
+  fits_list <- generate_fits_list(fits_list)
+  all_permutations <- generate_all_permutations(names(fits_list))
+
+  k_right <- "L500"
+  fit_k_right <- L500
+  for (per in all_permutations) {
+    cat("per = ", per, ".")
+    split_parts <- unlist(strsplit(per," "))
+    k_left <- split_parts[1]
+    fit_k_left <- fits_list[[k_left]]
+    if (type == "cells") {
+      #cat(dim(fit_k_left$L), "/n")
+      correlation <- claculate_correlation(fit_k_left$L, fit_k_right, method = correlation_method)
+      file_name <- glue('{correlation_method}_corrlation_between_{type}_')
+    }
+    
+    pdf(glue("{path_to_plots}{file_name}k={k_left}_with_k={k_right}.pdf"))
+    draw(Heatmap(correlation,
+                 cluster_rows = FALSE,
+                 cluster_columns = FALSE,
+                 col = col_fun,
+                 column_title = glue("The Corralation Between K={k_left} with K={k_right} Topics"),
+                 column_title_gp = gpar(fontsize = 20, fontface = "bold"),
+                 name = "Correlation",
+                 rect_gp = gpar(col = "white", lwd = 2),
+                 column_names_rot = 45,
+                 cell_fun = HeatmapHelper_add_values_to_display(correlation = correlation,
+                                                                OnlyPositive = TRUE)
+    )
+    )
+    dev.off()
+    load_libraries()
+  }
+  
+}
+helper_topic_evaluation(fits_list=fit_files_paths, path_to_plots="/Users/shmuel/microglia/plots/gene_correlation/vs_15topics_of_500/", type = "cells", correlation_method = "pearson", L500=L_hat)
