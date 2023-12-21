@@ -14,6 +14,7 @@ load_libraries <- function() {
   library(Matrix)
   library(fastTopics)
   library(cowplot)
+  library(MASS)
 }
 
 run_preprocess <- function(obj, path_to_plots) {
@@ -38,14 +39,14 @@ run_transformation <- function(obj) {
 main <- function(path_to_obj) {
   path_to_obj <- "/Users/shmuel/SuperAgerRemoveSample7264-2Microglia.h5seurat"
   path_to_plots <- "/Users/shmuel/microglia/plots/"
-  path_to_objs <- "/Users/shmuel/microglia/objects"
+  path_to_objs <- "/Users/shmuel/microglia/objects/"
   
   load_libraries()
   obj <- LoadH5Seurat(path_to_obj)
   #filder microglia
   source("~/Desktop/project/research_project/fillter_microglia.R")
   obj_subset <- get_filtered_obj(obj, path_to_plots, path_to_objs)
-  obj_subset <- run_preprocess(obj_subset)
+  obj_subset <- run_preprocess(obj_subset) # todo maybe run before make subset 
   # obj_subset <- run_transformation(obj_subset)
   
   #### here we need to run the fit_topic_model but it takes time so we skip it ####
@@ -56,14 +57,18 @@ main <- function(path_to_obj) {
     "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_9.rds",
     "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_10.rds",
     "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_11.rds",
-    "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_12.rds"
+    "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_12.rds",
+    "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_13.rds",
+    "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_14.rds",
+    "/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds"
+    
   )
   
   #run visualization topic model
   source("~/Desktop/project/research_project/visualization_microglia_topic_model.R")
   for (fit_file in fit_files_paths) {
     fit <- readRDS(path_to_fit)
-    run_main_flow(obj_subset, fit, path_to_plots)
+    run_main_flow(obj_subset, fit, path_to_plots) #from ~/Desktop/project/research_project/visualization_microglia_topic_model.
   }
   
   #run correlation between the topics
@@ -75,3 +80,19 @@ main <- function(path_to_obj) {
 }
 
 main()
+
+###########3
+
+###################draft
+library(igraph)
+
+# Create an example bipartite graph
+vertices1 <- c("1", "2", "3")
+vertices2 <- c("X", "Y", "Z")
+edges <- c("1", "X", "2", "Y", "3", "Z")
+
+# Create a graph object
+graph <- graph_from_data_frame(data.frame(from = edges[seq(1, length(edges), 2)], to = edges[seq(2, length(edges), 2)]))
+
+# Plot the bipartite graph
+plot(graph, layout = layout.bipartite, vertex.color = c("lightblue", "lightgreen"))
