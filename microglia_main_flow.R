@@ -44,7 +44,7 @@ main <- function(path_to_obj) {
   load_libraries()
   obj <- LoadH5Seurat(path_to_obj)
   #filder microglia
-  source("~/Desktop/project/research_project/fillter_microglia.R")
+  source("~/Desktop/project/research_project/microglia_filter_redundence.R")
   obj_subset <- get_filtered_obj(obj, path_to_plots, path_to_objs)
   obj_subset <- run_preprocess(obj_subset) # todo maybe run before make subset 
   # obj_subset <- run_transformation(obj_subset)
@@ -65,15 +65,23 @@ main <- function(path_to_obj) {
   )
   
   #run visualization topic model
-  source("~/Desktop/project/research_project/visualization_microglia_topic_model.R")
+  source("~/Desktop/project/research_project/microglia_visualization_topic_model.R")
   for (fit_file in fit_files_paths) {
     fit <- readRDS(path_to_fit)
-    run_main_flow(obj_subset, fit, path_to_plots) #from ~/Desktop/project/research_project/visualization_microglia_topic_model.
+    run_main_flow(obj_subset, fit, path_to_plots) #from ~/Desktop/project/research_project/microglia_visualization_topic_model.R"
   }
   
   #run correlation between the topics
-  source("~/Desktop/project/research_project/topic_correlation_microglia.R")
-  run_topic_evaluation(fit_files_paths, path_to_plots) #from "~/Desktop/project/research_project/topic_correlation_microglia.R"
+  source("~/Desktop/project/research_project/microglia_topic_correlation.R")
+  run_topic_evaluation(fit_files_paths, path_to_plots) #from "~/Desktop/project/research_project/microglia_topic_correlation.R"
+  
+  #check correlation vs cortex topics
+  source("~/Desktop/project/research_project/correlation_by_genes.R")
+  cortex_fit_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/all_microglia_topic_fit.15.RDS")
+  correlation_with_cortex(obj = obj,
+                          cortex_fit_15 = cortex_fit_15,
+                          fits_list = fit_files_paths,
+                          path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_with_cortex",predicted = L_hat)
   
   #run de
   #...
