@@ -1,19 +1,24 @@
 # function to calculate the correlation between topic modeling from different data bases
 
-# 6 -  this is work!
+
 ######################################################################################################
 ### Predict the L matrix based on the F matrix and compute the correlation with the cells matrix. ###
 ###################################################################################################### 
 #obj <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/filtered_microglia.rds")
 
-
-correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots, type = "cells", correlation_method = "pearson", predicted="NA"){
-  #extract the counts matrix 
+extract_counts_matrix <- function(obj){
   obj_count <- obj@assays$RNA@counts
   obj_count <- t(obj_count)
   col_sums <- colSums(obj_count)
   nonzero_cols <- col_sums != 0
   obj_count <- obj_count[, nonzero_cols]
+  return(obj_count)
+}
+
+correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots, type = "cells", correlation_method = "pearson", path_to_predicted=NA){
+  #extract the counts matrix 
+  obj_count <- extract_counts_matrix(obj)
+  
   
   #intersection to the commonly gene
   intersection_gene <- (intersect(colnames(obj_count), rownames(cortex_fit_15$F)))
@@ -21,12 +26,15 @@ correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots
   obj_count <- obj_count[,colnames(obj_count) %in% intersection_gene]
   
   #predict the L matrix by the F of 500 and count of 18
-  if (all(!is.na(predicted))) {
+  if (is.na(path_to_predicted)) {
     predicted <- predict(cortex_fit_15, obj_count, numiter = 100)
+  }
+  else{
+    predicted <- readRDS(path_to_predicted)
   }
   
   # print the heatmap of correlations
-  helper_topic_evaluation(fits_list=fit_files_paths, path_to_plots="/Users/shmuel/microglia/plots/gene_correlation/vs_15topics_of_500/", type = "cells", correlation_method = "pearson", L500=predicted)
+  helper_topic_evaluation(fits_list=fit_files_paths, path_to_plots= path_to_plots, type = "cells", correlation_method = correlation_method, L500=predicted)
   
 }
 
