@@ -44,9 +44,9 @@ correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots
 helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", correlation_method = "pearson", L500="NA") {
   extract_k <- function(path_to_fit) {
     fit <- readRDS(path_to_fit)
-    cat(dim(fit$F)[2], "||")
     return(list(fit = fit, k = dim(fit$F)[2]))
   }
+  
   generate_fits_list <- function(paths) {
     fits_list <- list()  # Initialize the fits_list
     
@@ -56,6 +56,7 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
     }
     return(fits_list)
   }
+  
   generate_all_permutations <- function(lst) {
     # Initialize an empty vector to store the permutations
     all_permutations <- character(0)
@@ -66,6 +67,7 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
     }
     return(all_permutations)
   }
+  
   print(glue("Running topic evaluation flow for {type} and {correlation_method}"))
   col_fun = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
   col_fun(seq(-20, 20))
@@ -76,7 +78,6 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
   k_right <- "L500"
   fit_k_right <- L500
   for (per in all_permutations) {
-    cat("per = ", per, ".")
     split_parts <- unlist(strsplit(per," "))
     k_left <- split_parts[1]
     fit_k_left <- fits_list[[k_left]]
