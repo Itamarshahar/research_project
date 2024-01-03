@@ -54,31 +54,10 @@ calculate_correlation_by_diagosis(obj = microglia_obj,
                                   path_to_plots = path_to_plots)
 
 
-
-
-
-
-
-
-
-
 #load the fit model
 cortex_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/all_microglia_topic_fit.15.RDS")
 hippocampus_14 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_14.rds")
-
-
-# When looking for markers, we observe that the genes identified as markers in Topic 3 of Roi are also markers in Topic 15 of our model.
-write.csv(cortex_15$F[c("TOP2A", "MKI67", "MRC1", "TMEM163", "HSPA1B")], file = glue(path_to_plots, "cortex.csv"), row.names = FALSE)
-roi_fit_15$F["MKI67",]
-roi_fit_15$F["MRC1",]
-roi_fit_15$F["TMEM163",]
-roi_fit_15$F["HSPA1B",]
-cortex_15$F["HSPA1A",]
-roi_fit_15$F["NFKB1",]
-roi_fit_15$F["CX3CR1",]
-roi_fit_15$F["DAM2",]
-roi_fit_15$F["GPNMB",]
-fit_15$F[c("TOP2A","MKI67","MRC1","TMEM163","HSPA1B"),]
+hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
 
 
 
@@ -119,23 +98,14 @@ df_postmean_lfsr_scores<-function(reweighted_f, original_f){
   return(de_gene)
 }
 
-obj_count <- extract_counts_matrix(obj)
-intersection_gene <- (intersect(colnames(obj_count), rownames(cortex_fit_15$F)))
-cortex_fit_15$F <- cortex_fit_15$F[rownames(cortex_fit_15$F) %in% intersection_gene,]
-hippocampus_14$F <- hippocampus_14$F[rownames(hippocampus_14$F) %in% intersection_gene,]
-
-score_matrix_hippo <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = hippocampus_14$F,upper_quantile = 0.9,lower_quantile = 0.45)
-                                              ,original_f = hippocampus_14$F)
-score_matrix_cprtex <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = cortex_fit_15$F,upper_quantile = 0.9,lower_quantile = 0.45)
-                                              ,original_f = cortex_fit_15$F)
 
 
 
 
 ########## check if there is commune genes in topics that we think they competable with adi function
 #########
-intersaction_de_between_topic <- function(score_matrix_hippo, score_matrix_cprtex, path_to_plots, sum_de=c(50,100,200,300,400)){
-  file_name <- glue("{path_to_plots}intersaction_de_gene_hippocampus_and_cortex.pdf")
+intersaction_de_between_topic <- function(score_matrix_hippo, score_matrix_cprtex, path_to_plots, sum_de=c(50,100,200,300,400), scale="NA"){
+  file_name <- glue("{path_to_plots}intersaction_de_gene_hippocampus_and_cortex_scale_{scale}.pdf")
   pdf(file_name)
   for (n in sum_de){
     cols <- unique(score_matrix_hippo$topic)
@@ -153,12 +123,13 @@ intersaction_de_between_topic <- function(score_matrix_hippo, score_matrix_cprte
                head(n) %>%
                pull(gene))
         )
-        intersaction_matrix[glue("k{j}"),glue("k{i}")] <- result
+        intersaction_matrix[glue("k{j}"),glue("k{i}")] <- result/n
       }
     }
     
     
     draw(pheatmap(intersaction_matrix,
+                  scale = scale,
                  cluster_rows = FALSE,
                  cluster_cols = FALSE,
                  #col = col_fun,
@@ -174,23 +145,33 @@ intersaction_de_between_topic <- function(score_matrix_hippo, score_matrix_cprte
   dev.off()
   
 }
-intersaction_de_between_topic(score_matrix_hippo = score_matrix_hippo, score_matrix_cprtex = score_matrix_cprtex, path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_de_adi/")
+
+
+main_flow <- function(obj, hippocampus, cortex, path_to_plots, scale ="NA"){
+  
+  obj_count <- extract_counts_matrix(obj)
+  intersection_gene <- (intersect(colnames(obj_count), rownames(cortex$F)))
+  cortex$F <- cortex$F[rownames(cortex$F) %in% intersection_gene,]
+  hippocampus$F <- hippocampus$F[rownames(hippocampus$F) %in% intersection_gene,]
+  
+  score_matrix_hippo <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = hippocampus$F,upper_quantile = 0.9,lower_quantile = 0.45)
+                                                ,original_f = hippocampus$F)
+  score_matrix_cprtex <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = cortex$F,upper_quantile = 0.9,lower_quantile = 0.45)
+                                                 ,original_f = cortex$F)
+  
+  
+  intersaction_de_between_topic(score_matrix_hippo = score_matrix_hippo,
+                                score_matrix_cprtex = score_matrix_cprtex,
+                                path_to_plots = path_to_plots,
+                                sum_de=c(50,100,200,300,400,1000,5000,10000),
+                                scale = scale)
+}
+main_flow(obj= obj,
+          hippocampus =  hippocampus_15,
+          cortex = cortex_15,
+          path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_de_adi_15/",
+          scale = "column")  
 
 
 
 
-#########
-i <- 1
-cortex_fit_15$F[score_matrix_hippo[score_matrix_hippo$topic == glue("k{i}"), ] %>%
-  arrange(desc(reweighted_gene_score)) %>%
-  head(n) %>%
-  pull(gene),"k1"]
-
-sum(cortex_fit_15$F[score_matrix_hippo[score_matrix_hippo$topic == glue("k{1}"), ] %>%
-                      arrange(desc(reweighted_gene_score)) %>%
-                      head(n) %>%
-                      pull(gene),"k15"])
-sum(hippocampus_14$F[score_matrix_hippo[score_matrix_hippo$topic == glue("k{1}"), ] %>%
-                      arrange(desc(reweighted_gene_score)) %>%
-                      head(n) %>%
-                      pull(gene),"k1"])
