@@ -1,16 +1,7 @@
 ################################################################################
 ## This script suppose to run the flow of the topics.
 ################################################################################
-args = commandArgs(trailingOnly = TRUE)
 
-if (length(args) != 3) {
-  stop("please provide 3 args: <path_to_obj> <path_to_fit> <path_to_plots>", args)
-  
-} else {
-  path_to_obj <- args[1] # Seurat obj
-  path_to_fit <- args[2] # RDS obj
-  path_to_plots <- args[3]
-}
 
 load_libraries <- function() {
   print("loading libraries")
@@ -500,6 +491,6 @@ main <- function() {
   run_main_flow(loads$obj, loads$fit, path_to_plots)
 }
 
-main()
+#main()
 
 

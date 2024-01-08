@@ -67,7 +67,6 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
     }
     return(all_permutations)
   }
-  
   print(glue("Running topic evaluation flow for {type} and {correlation_method}"))
   col_fun = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
   col_fun(seq(-20, 20))
@@ -84,23 +83,27 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
     if (type == "cells") {
       #cat(dim(fit_k_left$L), "/n")
       correlation <- claculate_correlation(fit_k_left$L, fit_k_right, method = correlation_method)
-      file_name <- glue('{correlation_method}_corrlation_between_{type}_')
+      #file_name <- glue('{correlation_method}_corrlation_between_{type}_')
+      file_name <- "The_{type}_Correlation_Between_Cells_of_Hippocampus_K={k_left}_with_Cortex_K=15"
     }
     
-    pdf(glue("{path_to_plots}{file_name}k={k_left}_with_k={k_right}.pdf"))
+    pdf(glue("{path_to_plots}{file_name}.pdf"))
     draw(Heatmap(correlation,
                  cluster_rows = FALSE,
                  cluster_columns = FALSE,
                  col = col_fun,
-                 column_title = glue("The Corralation Between K={k_left} with K={k_right} Topics"),
+                 column_title = "Hippocampus Topics",
+                 #column_title = glue(""),
                  column_title_gp = gpar(fontsize = 10, fontface = "bold"),
                  name = "Correlation",
                  rect_gp = gpar(col = "white", lwd = 2),
                  column_names_rot = 45,
                  cell_fun = HeatmapHelper_add_values_to_display(correlation = correlation,
-                                                                OnlyPositive = TRUE)
-    )
-    )
+                                                                OnlyPositive = TRUE),
+                 row_title = "Cortex Topics",
+                 #column_title= "Hippocampus"
+    ) #+  draw(legend = heatmap_legend(title = ""))
+    ) 
     dev.off()
     load_libraries()
   }

@@ -106,8 +106,8 @@ generate_fits_list <- function(paths) {
 run_topic_evaluation <- function(fit_list, path_to_plots, correlation_method="pearson") {
   print("Loading libraries")
   load_libraries()
-  helper_topic_evaluation(fit_list , path_to_plots, type = "genes", correlation_method = correlation_method) #, correlation_method = "kendall")
-  helper_topic_evaluation(fit_list, path_to_plots, type = "cells" , correlation_method = correlation_method)
+  helper_topic_evaluation(fit_list , glue(path_to_plots, "gene_correlation/"), type = "genes", correlation_method = correlation_method) #, correlation_method = "kendall")
+  helper_topic_evaluation(fit_list, glue(path_to_plots, "cell_correlation/"), type = "cells" , correlation_method = correlation_method)
 }
 
 
