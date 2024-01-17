@@ -209,3 +209,22 @@ generate_ScatterPlot_DE <- function(de_enriched,
            width = 10,
            plot = ., limitsize = FALSE)
 }
+
+
+# Define the function
+save_to_google_drive <- function(file_path, folder_link) {
+  library(googledrive)
+
+  # Authenticate and set up your Google Drive
+  drive_auth()
+
+  # Extract the folder ID from the provided link
+  extracted_id <- sub(".*/folders/(.*)", "\\1", folder_link)
+
+  # Set the extracted folder ID as the target folder
+  target_folder <- drive_get(as_id(extracted_id))
+
+  # Upload the PDF file to the target folder
+  drive_upload(file_path, name = basename(file_path), path = target_folder$id)
+
+}
