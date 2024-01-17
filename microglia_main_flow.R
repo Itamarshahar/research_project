@@ -81,12 +81,12 @@ main <- function(path_to_obj) {
   correlation_with_cortex(obj = obj,
                           cortex_fit_15 = cortex_fit_15,
                           fits_list = fit_files_paths,
-                          path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_with_cortex",predicted = L_hat)
+                          path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_with_cortex/",
+                          path_to_predicted = "/Users/shmuel/microglia/objects/predicted_cortex_15_L_fit.rds")
   
   #run de
   #...
 }
-
 main()
 
 ###########3

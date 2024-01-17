@@ -87,7 +87,7 @@ generate_fits_list <- function(paths) {
                  cluster_columns = FALSE,
                  col = col_fun,
                  column_title = glue("The Corralation Between K={k_left} with K={k_right} Topics"),
-                 column_title_gp = gpar(fontsize = 20, fontface = "bold"),
+                 column_title_gp = gpar(fontsize = 10, fontface = "bold"),
                  name = "Correlation",
                  rect_gp = gpar(col = "white", lwd = 2),
                  column_names_rot = 45,
@@ -103,11 +103,11 @@ generate_fits_list <- function(paths) {
 
 
 
-run_topic_evaluation <- function(fit_list, path_to_plots, correlation_method="spearman") {
+run_topic_evaluation <- function(fit_list, path_to_plots, correlation_method="pearson") {
   print("Loading libraries")
   load_libraries()
-  helper_topic_evaluation(fit_list , path_to_plots, type = "genes", correlation_method = correlation_method) #, correlation_method = "kendall")
-  helper_topic_evaluation(fit_list, path_to_plots, type = "cells" , correlation_method = correlation_method)
+  helper_topic_evaluation(fit_list , glue(path_to_plots, "gene_correlation/"), type = "genes", correlation_method = correlation_method) #, correlation_method = "kendall")
+  helper_topic_evaluation(fit_list, glue(path_to_plots, "cell_correlation/"), type = "cells" , correlation_method = correlation_method)
 }
 
 
