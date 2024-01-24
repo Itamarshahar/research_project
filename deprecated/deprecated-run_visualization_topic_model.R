@@ -80,36 +80,36 @@ generate_structure_plot <- function(obj = obj,
                                     fit = fit
 )
 {
+#   structure_plot(fit,
+#                  topics = 1:K,
+#                  colors = additional_colors,
+#                  gap = 25,
+#                  grouping = obj$celltype,
+#   )
+# 
+#   ggsave(paste0("structure_plot_celltype", ".pdf"),
+#          limitsize = FALSE,
+#          path = path_to_plots,
+#          width = 15,
+#          height = 10
+#   )
+#   structure_plot(fit,
+#                  topics = 1:K,
+#                  colors = additional_colors,
+#                  gap = 25,
+#                  grouping = obj$seurat_clusters,
+#   )
+#   ggsave(paste0("structure_plot_clusters", ".pdf"),
+#          limitsize = FALSE,
+#          path = path_to_plots,
+#          width = 15,
+#          height = 10
+#   )
   structure_plot(fit,
                  topics = 1:K,
                  colors = additional_colors,
                  gap = 25,
-                 grouping = obj$celltype,
-  )
-
-  ggsave(paste0("structure_plot_celltype", ".pdf"),
-         limitsize = FALSE,
-         path = path_to_plots,
-         width = 15,
-         height = 10
-  )
-  structure_plot(fit,
-                 topics = 1:K,
-                 colors = additional_colors,
-                 gap = 25,
-                 grouping = obj$seurat_clusters,
-  )
-  ggsave(paste0("structure_plot_clusters", ".pdf"),
-         limitsize = FALSE,
-         path = path_to_plots,
-         width = 15,
-         height = 10
-  )
-  structure_plot(fit,
-                 topics = 1:K,
-                 colors = additional_colors,
-                 gap = 25,
-                 grouping = obj$Diagnosis,
+                 grouping = obj$"Diagnosis",
   )
 
   ggsave(paste0("structure_plot_diagnosis", ".pdf"),
@@ -119,6 +119,37 @@ generate_structure_plot <- function(obj = obj,
          height = 10
   )
 }
+
+# generate_structure_plot <- function(obj = obj,
+#                                     path_to_plots = path_to_plots,
+#                                     additional_colors = additional_colors,
+#                                     K = K,
+#                                     fit = fit,
+#                                     grouping_var = NULL
+# ) {
+#   if (is.null(grouping_var)) {
+#     stop("Please specify a grouping variable.")
+#   }
+# 
+#   for (group in grouping_var) {
+#     plot_title <- paste0("structure_plot_", group)
+#     grouping <- obj[[group]]
+#     structure_plot(fit,
+#                    topics = 1:K,
+#                    colors = additional_colors,
+#                    gap = 25,
+#                    grouping = grouping
+#     )
+# 
+#     ggsave(paste0(plot_title, ".pdf"),
+#            limitsize = FALSE,
+#            path = path_to_plots,
+#            width = 15,
+#            height = 10
+#     )
+#   }
+# }
+
 
 #' Generate UMAP-based Feature Plots
 #'

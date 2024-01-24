@@ -451,6 +451,8 @@ run_main_flow <- function(obj, fit, path_to_plots) {
   all_K <- paste0("k", 1:K)
   
   additional_colors <- get_qualitative_colors(K)
+  
+  
   generate_DotPlot(obj = obj,
                    custom_feature_names = all_K,
                    path_to_plots = path_to_plots)
