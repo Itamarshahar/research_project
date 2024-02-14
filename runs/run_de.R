@@ -7,8 +7,7 @@ args = commandArgs(trailingOnly=TRUE)
 if (length(args) != 5) {
   stop("please provide 5 args: <path_to_obj> <path_to_de> <path_to_plots> <K> <type_of_de>")
 
-}
-    else {
+} else {
     path_to_obj <- args[1] # Obj
     path_to_fit <- args[2] # RDS obj with the fitted topic model
     path_to_output <- args[3] # path to the output (will be saved as RDS)
@@ -23,7 +22,7 @@ row_sum <- rowSums(counts)
 nonzero_rows <- row_sum != 0
 counts <- counts[nonzero_rows,]
 counts <- t(counts)
-
+LFC_type <- "le"
 de_psd <- de_analysis(fit = fit,
                   X = counts,
                   pseudocount = 0.1,
