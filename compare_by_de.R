@@ -112,7 +112,7 @@ intersaction_de_between_topic <- function(score_matrix_hippo,
 }
 
 
-main_flow <- function(obj, hippocampus, cortex, path_to_plots, scale ="NA"){
+generate_intersection_gene_heatmap <- function(obj, hippocampus, cortex, path_to_plots, scale ="NA"){
   
   obj_count <- extract_counts_matrix(obj)
   intersection_gene <- (intersect(colnames(obj_count), rownames(cortex$F)))
@@ -130,14 +130,4 @@ main_flow <- function(obj, hippocampus, cortex, path_to_plots, scale ="NA"){
                                 path_to_plots = path_to_plots,
                                 sum_de=c(50,100,200,300,400,1000,5000,10000),
                                 scale = scale)
-}
-
-for (name in c("column", "row", "NA") ){
-  main_flow(obj= obj,
-            hippocampus =  hippocampus_15,
-            cortex = cortex_15,
-            #path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_de_adi_15/",
-            path_to_plots = "/Volumes/habib-lab/shmuel.cohen/microglia/plots/correlation/de/",
-            scale = name)  
-  
 }
