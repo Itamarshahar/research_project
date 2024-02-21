@@ -32,6 +32,12 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
          height = 7,
          limitsize = FALSE,
          path = path_to_plots)
+  ggsave("umap_microglia_by_sampleId.pdf",
+         plot = DimPlot(obj,group.by = "SampleID", label = T,label.size = 3),
+         width = 10,
+         height = 7,
+         limitsize = FALSE,
+         path = path_to_plots)
   ggsave("dotplot_markers_microglia.pdf",
          plot = DotPlot(obj, cols = c("yellow", "purple"), features = get_markers.of.ct.brain()) + RotatedAxis()+theme(text =  element_text(size = 9), axis.text.x = element_text(size = 9)),
          width = 15,
@@ -75,9 +81,15 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
          height = 7,
          limitsize = FALSE,
          path = path_to_plots)
+  ggsave("umap_microglia_filtered_by_sampleId.pdf",
+         plot = DimPlot(obj_subset,group.by = "SampleID", label = T, label.size = 3),
+         width = 10,
+         height = 7,
+         limitsize = FALSE,
+         path = path_to_plots)
   ggsave("dotplot_markers_microglia_filtered.pdf",
-         plot = DotPlot(obj_subset, cols = c("yellow", "purple"), features = get_markers.of.ct.brain()) + RotatedAxis(),
-         width = 13,
+         plot = DotPlot(obj_subset, cols = c("yellow", "purple"), features = get_markers.of.ct.brain()) + RotatedAxis()+theme(text =  element_text(size = 9), axis.text.x = element_text(size = 9)),
+         width = 15,
          height = 7,
          limitsize = FALSE,
          path = path_to_plots)
