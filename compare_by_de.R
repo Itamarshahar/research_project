@@ -1,98 +1,75 @@
-
 ################################################################################
 ######         compare topics by DE gene                ##########
 ################################################################################
 
-
-
+# install.packages('ggcorrplot')
+# install.packages('ltm')
 
 #load the fit model
-cortex_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/cortex_all_microglia_topic_fit.15.RDS")
-hippocampus_14 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_14.rds")
-hippocampus_13 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_13.rds")
-hippocampus_12 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_12.rds")
-hippocampus_11 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_11.rds")
-hippocampus_10 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_10.rds")
+# cortex_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/cortex_all_microglia_topic_fit.15.RDS")
+# hippocampus_14 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_14.rds")
+# hippocampus_13 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_13.rds")
+# hippocampus_12 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_12.rds")
+# hippocampus_11 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_11.rds")
+# hippocampus_10 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_10.rds")
 
 #hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
-hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
+# hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
 
 
 ################################################################################
-######                adi function                          ##########
+#
 ################################################################################
-# I edited a small bug in the reweighing function, so in case you'll want to use it -
-topic_reweight_f_quantile_v2<-function(f_matrix, upper_quantile, lower_quantile){
-  topics_amount<-ncol(f_matrix)
-  reweighted_f<-f_matrix
-  for(topic_idx in 1:topics_amount){
-    # create a vector with FALSE in each idx that isn't the topic_idx (put there TRUE)
-    logical_vec_curr_idx<-logical(topics_amount)
-    logical_vec_curr_idx[topic_idx]<-TRUE
-    cur_topic_as_mat<-f_matrix[, logical_vec_curr_idx, drop=FALSE]
-    all_other_topics_mat<-f_matrix[, !logical_vec_curr_idx, drop=FALSE]
-    # find quantile per each row (hence MARGIN=1) => across all other topics
-    upper_quantile_other_topics<-apply(all_other_topics_mat, 1, function(x){quantile(x, upper_quantile)})
-    lower_quantile_other_topics<-apply(all_other_topics_mat, 1, function(x){quantile(x, lower_quantile)})
-    log_ratio_ours_vs_upper<-log(cur_topic_as_mat+1e-15) - log(upper_quantile_other_topics+1e-15)
-    log_ratio_ours_vs_lower<-log(cur_topic_as_mat+1e-15) - log(lower_quantile_other_topics+1e-15)
-    reweighted_f[, topic_idx]<- log_ratio_ours_vs_upper *
-      ifelse(log_ratio_ours_vs_lower<0, Inf, (f_matrix[, logical_vec_curr_idx]*log_ratio_ours_vs_lower)^sign(log_ratio_ours_vs_upper))
-  }
-  return(reweighted_f)
-}
-
-df_postmean_lfsr_scores<-function(reweighted_f, original_f){
-  reweighted_gene_score<-reweighted_f %>%
-    melt(variable.factor = FALSE) %>%
-    rename_with(~sub("Var1", "gene" , .x)) %>%
-    rename_with(~sub("Var2", "topic" , .x)) %>%
-    rename_with(~sub("value", "reweighted_gene_score" , .x))
-  gene_scores <- original_f %>%
-    as.data.frame %>%
-    rownames_to_column('gene') %>%
-    pivot_longer(!gene, names_to='topic', values_to='gene_score') %>%
-    dplyr::select(gene, topic, gene_score)
-  # create df of gene name, topic, gene id,  reweighted_gene_score & original gene score
-  de_gene<-reweighted_gene_score %>%
-    dplyr::left_join(gene_scores, by = c("gene", "topic"))
-  return(de_gene)
+find_de_genes <- function(obj, fit) {
+  reweighted_f <- topic_reweight_f(fit$F)
+  df <- df_pos_des(obj, reweighted_f, fit)
+  des_df <- df %>% filter(z_score_log > 1 & percent_cells > 0.01)
+  return(des_df)
 }
 
 
+extract_counts_matrix <- function(obj){
+  obj_count <- obj@assays$RNA@counts
+  obj_count <- t(obj_count)
+  col_sums <- colSums(obj_count)
+  nonzero_cols <- col_sums != 0
+  obj_count <- obj_count[, nonzero_cols]
+  return(obj_count)
+}
 
 
 ################################################################################
 ###### check if there is commune genes in topics that we think they competable 
 ################################################################################
 intersaction_de_between_topic <- function(score_matrix_hippo,
-                                          score_matrix_cprtex, 
-                                          path_to_plots, 
-                                          sum_de=c(50,100,200,300,400), 
-                                          scale="NA"){
+                                          score_matrix_cortex,
+                                          path_to_plots,
+                                          sum_de = c(50, 100, 200, 300, 400),
+                                          scale = "NA") {
+
   file_name <- glue("{path_to_plots}intersaction_de_gene_hippocampus_and_cortex_scale_{scale}.pdf")
   pdf(file_name)
-  for (n in sum_de){
+  for (n in sum_de) {
     cols <- unique(score_matrix_hippo$topic)
-    rows <- unique(score_matrix_cprtex$topic)
+    rows <- unique(score_matrix_cortex$topic)
     intersaction_matrix <- matrix(0, nrow = length(rows), ncol = length(cols), dimnames = list(rows, cols))
     for (i in 1:length(cols)) {
-      for (j in 1:length(rows)){
+      for (j in 1:length(rows)) {
         result <- sum(
-          (score_matrix_hippo[score_matrix_hippo$topic == glue("k{i}"), ] %>%
-             arrange(desc(reweighted_gene_score)) %>%
-             head(n) %>%
-             pull(gene)) %in%
-            (score_matrix_cprtex[score_matrix_cprtex$topic == glue("k{j}"), ] %>%
-               arrange(desc(reweighted_gene_score)) %>%
-               head(n) %>%
-               pull(gene))
+          (score_matrix_hippo[score_matrix_hippo$topic == glue("k{i}"),] %>%
+            arrange(desc(reweighted_gene_score)) %>%
+            head(n) %>%
+            pull(gene)) %in%
+            (score_matrix_cortex[score_matrix_cortex$topic == glue("k{j}"),] %>%
+              arrange(desc(reweighted_gene_score)) %>%
+              head(n) %>%
+              pull(gene))
         )
-        intersaction_matrix[glue("k{j}"),glue("k{i}")] <- result/n
+        intersaction_matrix[glue("k{j}"), glue("k{i}")] <- result / n
       }
     }
-    
-    
+
+
     draw(pheatmap(intersaction_matrix,
                   scale = scale,
                   cluster_rows = FALSE,
@@ -108,36 +85,49 @@ intersaction_de_between_topic <- function(score_matrix_hippo,
     ))
   }
   dev.off()
-  
+
 }
 
 
-main_flow <- function(obj, hippocampus, cortex, path_to_plots, scale ="NA"){
-  
-  obj_count <- extract_counts_matrix(obj)
-  intersection_gene <- (intersect(colnames(obj_count), rownames(cortex$F)))
-  cortex$F <- cortex$F[rownames(cortex$F) %in% intersection_gene,]
-  hippocampus$F <- hippocampus$F[rownames(hippocampus$F) %in% intersection_gene,]
-  
-  score_matrix_hippo <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = hippocampus$F,upper_quantile = 0.9,lower_quantile = 0.45)
-                                                ,original_f = hippocampus$F)
-  score_matrix_cprtex <- df_postmean_lfsr_scores(reweighted_f = topic_reweight_f_quantile_v2(f_matrix = cortex$F,upper_quantile = 0.9,lower_quantile = 0.45)
-                                                 ,original_f = cortex$F)
-  
-  
-  intersaction_de_between_topic(score_matrix_hippo = score_matrix_hippo,
-                                score_matrix_cprtex = score_matrix_cprtex,
-                                path_to_plots = path_to_plots,
-                                sum_de=c(50,100,200,300,400,1000,5000,10000),
-                                scale = scale)
+run_compare_by_de <- function(obj, hippocampus, cortex, path_to_plots, scale = "NA") {
+  source("utilsDE.R")
+  for (scale in c("column", "row", "NA")) {
+    obj_count <- extract_counts_matrix(obj)
+    intersection_gene <- (intersect(colnames(obj_count), rownames(cortex$F)))
+    cortex$F <- cortex$F[rownames(cortex$F) %in% intersection_gene,]
+    hippocampus$F <- hippocampus$F[rownames(hippocampus$F) %in% intersection_gene,]
+
+    score_matrix_hippo <- find_de_genes(obj = obj,
+                                 fit = hippocampus)
+
+    score_matrix_cortex <- find_de_genes(obj = obj,
+                                  fit = score_matrix_cortex)
+
+    intersaction_de_between_topic(score_matrix_hippo = score_matrix_hippo,
+                                  score_matrix_cortex = score_matrix_cortex,
+                                  path_to_plots = path_to_plots,
+                                  sum_de = c(50, 100, 200, 300, 400, 1000, 5000, 10000),
+                                  scale = scale)
+  }
 }
 
-for (name in c("column", "row", "NA") ){
-  main_flow(obj= obj,
-            hippocampus =  hippocampus_15,
-            cortex = cortex_15,
-            #path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_de_adi_15/",
-            path_to_plots = "/Volumes/habib-lab/shmuel.cohen/microglia/plots/correlation/de/",
-            scale = name)  
-  
-}
+
+
+run_compare_by_de(obj = obj,
+                  hippocampus = hippocampus_15,
+                  cortex = cortex_15,
+                  path_to_plots = "/Volumes/habib-lab/shmuel.cohen/microglia/plots/correlation/de/",
+)
+
+
+# call to main flow
+# obj <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_topic_model.rds")
+#obj <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/filtered_microglia.rds")
+hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
+cortex_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/cortex_all_microglia_topic_fit.15.RDS")
+path_to_plots <- "/Volumes/habib-lab/shmuel.cohen/microglia/plots/correlation/de/"
+
+run_compare_by_de(obj = obj,
+                  hippocampus = hippocampus_15,
+                  cortex = cortex_15,
+                  path_to_plots = path_to_plots)
