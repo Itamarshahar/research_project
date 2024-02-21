@@ -6,25 +6,17 @@
 ###################################################################################################### 
 #obj <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/filtered_microglia.rds")
 
-extract_counts_matrix <- function(obj){
-  obj_count <- obj@assays$RNA@counts
-  obj_count <- t(obj_count)
-  col_sums <- colSums(obj_count)
-  nonzero_cols <- col_sums != 0
-  obj_count <- obj_count[, nonzero_cols]
-  return(obj_count)
-}
 
 correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots, type = "cells", correlation_method = "pearson", path_to_predicted=NA){
-  #extract the counts matrix 
+  #extract the counts matrix
   obj_count <- extract_counts_matrix(obj)
-  
-  
+
+
   #intersection to the commonly gene
   intersection_gene <- (intersect(colnames(obj_count), rownames(cortex_fit_15$F)))
   cortex_fit_15$F <- cortex_fit_15$F[rownames(cortex_fit_15$F) %in% intersection_gene,]
   obj_count <- obj_count[,colnames(obj_count) %in% intersection_gene]
-  
+
   #predict the L matrix by the F of 500 and count of 18
   if (is.na(path_to_predicted)) {
     predicted <- predict(cortex_fit_15, obj_count, numiter = 100)
@@ -32,10 +24,10 @@ correlation_with_cortex <- function(obj, cortex_fit_15, fits_list, path_to_plots
   else{
     predicted <- readRDS(path_to_predicted)
   }
-  
+
   # print the heatmap of correlations
   helper_topic_evaluation(fits_list=fit_files_paths, path_to_plots= path_to_plots, type = "cells", correlation_method = correlation_method, L500=predicted)
-  
+
 }
 
 

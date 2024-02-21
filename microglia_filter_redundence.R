@@ -10,7 +10,9 @@ get_markers.of.ct.brain <- function(){
     Astrocytes=c("SLC1A2","SLC1A3","APOE","GJA1","GFAP", "CD44", "ALDH1L1", "SLC1A2", "ADGRV1", "GPC5", "RYR3", "GFAP") %>% unique(),
     Endothelial=c("FLT1", "CLDN5","ABCB1","ATP10A", "CLDN5", "FLT1", "ABCB1", "EBF1") %>% unique(),
     GABAergic=c("MEG3", "PVALB","SST","VIP", "KIT","GAD2", "NXPH1", "LHFPL3", "GRIK1", "ADARB2") %>% unique(),
-    Glutamatergic=c("SLC17A7", "RORB", "TOX","FOXP2", "CUX2", "RALYL", "KCNIP4", "CBLN2", "LDB2", "KCNQ5") %>% unique())
+    Glutamatergic=c("SLC17A7", "RORB", "TOX","FOXP2", "CUX2", "RALYL", "KCNIP4", "CBLN2", "LDB2", "KCNQ5") %>% unique(),
+    Monocytes = c('Ly6c2', 'Ccr2', 'Msr1') %>% unique(),
+    Macrophages= c('Mrc1','Cd86','Csf1r') %>% unique())
 }
 
 get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
