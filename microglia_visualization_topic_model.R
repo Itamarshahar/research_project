@@ -246,7 +246,18 @@ generate_DotPlot <- function(obj, custom_feature_names, path_to_plots) {
                                order = F,
                                #mean_threshold = 0.001
   ) &
-    labs(y = "Topics", x = "SampleID", title = "SampleID and the Average Expression of Over Different Topics-itamar ") &
+    labs(y = "Topics", x = "SampleID", title = "SampleID and the Average Expression of Over Different Topics") &
+    RotatedAxis()
+  
+  g_SampleID_2 <- dotplot_topics(obj = obj,
+                               topic_columns = custom_feature_names,
+                               group.by = "Diagnosis_SampleID",
+                               #group.by = "SampleID",
+                               alpha.threshold = 0.001,
+                               order = F,
+                               mean_threshold = 0.001
+  ) &
+    labs(y = "Topics", x = "SampleID", title = "SampleID and the Average Expression of Over Different Topics") &
     RotatedAxis()
   
   g_seurat_clusters <- dotplot_topics(obj = obj,
@@ -255,7 +266,7 @@ generate_DotPlot <- function(obj, custom_feature_names, path_to_plots) {
                                       alpha.threshold = 0.01,
                                       order = F,
   ) + labs(y = "Topics", x = "seurat_clusters", title = "seurat_clusters and the Average Expression of Over Different Topics ") & RotatedAxis()
-  plot_grid( g_Age, g_Diagnosis, g_SampleID, g_seurat_clusters, nrow = 4, ncol = 1)
+  plot_grid( g_Age, g_Diagnosis, g_SampleID,g_SampleID_2, g_seurat_clusters, nrow = 5, ncol = 1)
   ggsave("DotPlot_topics_vs_different_features.pdf",
          #plot = g_all,
          limitsize = FALSE,

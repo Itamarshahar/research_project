@@ -15,7 +15,9 @@ library(ggcorrplot)
 library(gplots)
 library(ltm)
 library(ggplotify)
-
+library(tidyverse)
+source("./utils/pathway_analysis_funcs.R")
+source("./utils/pathways.analysis.gilad.R")
 ###############################################################
 ################# create reweighted F matrix  #################
 ###############################################################
@@ -102,7 +104,7 @@ df_gene_scores<-function(obj, reweighted_f, fitted_model, assay="RNA", organism=
   gene_scores <- fitted_model$F %>%
     as.data.frame %>%
     rownames_to_column('gene') %>%
-    pivot_longer(!gene, names_to='topic', values_to='gene_score') %>%
+    tidyr::pivot_longer(!gene, names_to='topic', values_to='gene_score') %>%
     dplyr::select(gene, topic, gene_score)
   # create df of gene name, topic, gene id, reweighted_gene_score & original gene score
   de_gene<-reweighted_gene_score %>%
