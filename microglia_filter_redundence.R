@@ -26,10 +26,26 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
   obj <- FindClusters(obj, resolution = 0.2)
   
   #visualization the data
+  # Create the first plot
+  plot1 <- DimPlot(obj, label = TRUE)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
+  # Create the second plot
+  plot2 <- DimPlot(obj, group.by = "SampleID", label = TRUE, label.size = 3)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
+  # Remove the group titles
+  combined_plot <- grid.arrange(plot1, plot2, ncol = 2, top ="Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
+  
+  # Save the combined plot
   ggsave("umap_microglia.pdf",
-         plot = DimPlot(obj, label = T),
-         width = 10,
-         height = 7,
+         plot = combined_plot,
+         width = 17, # Adjust as needed
+         height = 7, # Adjust as needed
          limitsize = FALSE,
          path = path_to_plots)
   ggsave("dotplot_markers_microglia.pdf",
@@ -69,15 +85,32 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
   obj_subset <- FindClusters(obj_subset, resolution = 0.2)
   
   #visualization the data
+
+  # Create the first plot
+  plot1 <- DimPlot(obj_subset, label = TRUE)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
+  # Create the second plot
+  plot2 <- DimPlot(obj_subset, group.by = "SampleID", label = TRUE, label.size = 3)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
+  # Remove the group titles
+  combined_plot <- grid.arrange(plot1, plot2, ncol = 2, top ="Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
+
+  # Save the combined plot
   ggsave("umap_microglia_filtered.pdf",
-         plot = DimPlot(obj_subset, label = T),
-         width = 10,
-         height = 7,
+         plot = combined_plot,
+         width = 17, # Adjust as needed
+         height = 7, # Adjust as needed
          limitsize = FALSE,
          path = path_to_plots)
   ggsave("dotplot_markers_microglia_filtered.pdf",
-         plot = DotPlot(obj_subset, cols = c("yellow", "purple"), features = get_markers.of.ct.brain()) + RotatedAxis(),
-         width = 13,
+         plot = DotPlot(obj_subset, cols = c("yellow", "purple"), features = get_markers.of.ct.brain()) + RotatedAxis()+theme(text =  element_text(size = 9), axis.text.x = element_text(size = 9)),
+         width = 15,
          height = 7,
          limitsize = FALSE,
          path = path_to_plots)
