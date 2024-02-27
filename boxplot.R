@@ -15,7 +15,7 @@ add_topics_to_metadata <- function(obj, fits) {
 }
 
 
-print_box_plot <- function(obj, topic_dir, comparisons_specific){
+print_box_plot <- function(obj,fit, topic_dir, comparisons_specific){
   k <- 1
   obj_with_list <- add_topics_to_metadata(obj, list(X15=fit))
   obj <- obj_with_list[["obj"]]
@@ -36,8 +36,9 @@ print_box_plot <- function(obj, topic_dir, comparisons_specific){
                      color = "Diagnosis", palette = "jco",
                      add = "dotplot")
       #  Add p-value
-      p + stat_compare_means(comparisons =comparisons_specific[[col]] ,
-                             #ref.group = ".all."
+      #p + stat_compare_means(comparisons =comparisons_specific[[col]] ,
+        p + stat_compare_means(method = "wilcox.test",
+                            paired = TRUE, 
       ) + stat_summary(fun.data = function(x) data.frame(y=max(x) * 1.17, label = paste("Mean=",round(mean(x), digits = 2))), geom="text")
     }) %>% plot_grid(ncol = 1, plotlist = .) %>% print()
   })
@@ -45,4 +46,4 @@ print_box_plot <- function(obj, topic_dir, comparisons_specific){
 }
 
 
-print_box_plot(obj, topic_dir,comparisons_specific )
+print_box_plot(obj = obj,fit = hippocampus_15, topic_dir = topic_dir,comparisons_specific = comparisons_specific )
