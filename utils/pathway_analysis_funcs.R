@@ -1,7 +1,6 @@
 ##########################################
 ######## source files & libraries ########
 ##########################################
-setwd("~/HFD/")
 library(dplyr)
 library(ggplot2)
 library(reshape)

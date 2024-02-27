@@ -38,14 +38,21 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
     axis.text = element_blank(),   # Remove axis text
     axis.title = element_blank()   # Remove axis titles
   )
+  # Create the third plot
+  obj@meta.data$Gender[obj@meta.data$Gender == ""] = "Unknown"
+  plot3 <- DimPlot(obj, group.by = "Gender", label = TRUE, label.size = 3)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
   # Remove the group titles
-  combined_plot <- grid.arrange(plot1, plot2, ncol = 2, top ="Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
+  combined_plot <- grid.arrange(plot1, plot2, plot3, ncol = 3, top ="Two Dimensional Umap With Resolution 0.2 Colored by Cluster,Individual and Gender" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
   
   # Save the combined plot
   ggsave("umap_microglia.pdf",
          plot = combined_plot,
          width = 17, # Adjust as needed
-         height = 7, # Adjust as needed
+         height = 5, # Adjust as needed
          limitsize = FALSE,
          path = path_to_plots)
   ggsave("dotplot_markers_microglia.pdf",
@@ -93,19 +100,27 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
     axis.title = element_blank()   # Remove axis titles
   )
   # Create the second plot
-  plot2 <- DimPlot(obj_subset, group.by = "SampleID", label = TRUE, label.size = 3)+theme(
+  plot2 <- DimPlot(obj_subset, group.by = "SampleID_Diagnosis", label = TRUE, label.size = 2)+theme(
+    axis.line = element_blank(),   # Remove axis lines
+    axis.text = element_blank(),   # Remove axis text
+    axis.title = element_blank()   # Remove axis titles
+  )
+  # Create the third plot
+  obj_subset@meta.data$Gender[obj_subset@meta.data$Gender == ""] = "Unknown"
+  plot3 <- DimPlot(obj_subset, group.by = "Gender", label = TRUE, label.size = 3)+theme(
     axis.line = element_blank(),   # Remove axis lines
     axis.text = element_blank(),   # Remove axis text
     axis.title = element_blank()   # Remove axis titles
   )
   # Remove the group titles
-  combined_plot <- grid.arrange(plot1, plot2, ncol = 2, top ="Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
+  combined_plot <- grid.arrange(plot1, plot2, plot3, ncol = 3, 
+                                top ="Two Dimensional Umap With Resolution 0.2 Colored by Cluster,Individual and Gender" )#+ ggtitle("Two Dimensional Umap With Resolution 0.2 Color by Cluster and by Individual")
 
   # Save the combined plot
-  ggsave("umap_microglia_filtered.pdf",
+  ggsave("umap_microglia_filtered_comb.pdf",
          plot = combined_plot,
          width = 17, # Adjust as needed
-         height = 7, # Adjust as needed
+         height = 5, # Adjust as needed
          limitsize = FALSE,
          path = path_to_plots)
   ggsave("dotplot_markers_microglia_filtered.pdf",
@@ -120,6 +135,7 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
          height = 5,
          limitsize = FALSE,
          path = path_to_plots)
+
   
   #save the object after filtered as seurat file
   saveRDS(obj_subset,  paste0(path_to_objs,"filtered_microglia.rds"))
@@ -133,3 +149,74 @@ get_filtered_obj <- function(obj, path_to_plots, path_to_objs){
   return (obj_subset)
 }
 
+
+###added after the objects are saved
+
+generate_all_samples_double_score_matrix <- function(path_to_double_score_matrix, relevant_cells) {
+  merged_table <- data.frame(
+    row.names = relevant_cells,
+    doublet.score = rep(0,length(relevant_cells))
+  )
+  
+  for (path in path_to_double_score_matrix) {
+    temp <- h5read(path, "meta.data")
+    
+    # Update doublet scores in merged_table
+    relevant_rows <- temp[["_index"]] %in% relevant_cells
+    relevant_temp <- temp[relevant_rows, ]
+    
+    merged_table$doublet.score[rownames(relevant_temp)] <- relevant_temp$doublet.score
+  }
+  
+  return(merged_table)
+}
+
+generate_all_samples_double_score_matrix1 <- function(obj, path_to_double_score_matrix) {
+  rv_obj <- obj
+  rv_obj@meta.data["doublet.score"] <- 0
+  for (path in path_to_double_score_matrix) {
+    
+    temp <- h5read(path, "meta.data")
+    #doublet_scores <- temp["_index","doublet.score"]
+    doublet_scores_col1 <- temp[["_index"]]
+    doublet_scores_col2 <- temp$doublet.score
+    merged_table <- data.frame(
+                               doublet.score = doublet_scores_col2,
+                               row.names = doublet_scores_col1)
+    
+   
+    matching_rownames <- intersect(rownames(rv_obj@meta.data), rownames(merged_table))#$cell_id)
+    
+    #matching_rows <- merged_table[merged_table$cell_id %in% matching_rownames, ]
+    #rownames(matching_rows) <- matching_rows[["_index"]]
+    #matching_rownames <- rownames(obj@meta.data)[rownames(obj@meta.data) %in% merged_table[["_index"]]]
+    rv_obj@meta.data[matching_rownames, "doublet.score"] <- merged_table[matching_rownames, ]
+  }
+  
+  return(obj)
+}
+
+
+
+path_to_double_score_matrix <- c(
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput6962.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput6991.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput6992.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput6998.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7001.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7162.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7182.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7258.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7264-1.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7320.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7426.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput7436.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutput8126.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutputA-19-08.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutputA-19-79.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutputA20-22.h5seurat",
+  "/Volumes/habib-lab/Shared/SuperAgers/objects/DoubletFinder/DoubletFinderOutputA21-135.h5seurat"
+)
+
+new_obj <- generate_all_samples_double_score_matrix(path_to_double_score_matrix, rownames(obj@meta.data))
+plot <-FeaturePlot(object = obj, features = doublet.score, label=F)
