@@ -210,6 +210,7 @@ generate_ScatterPlot_DE <- function(de_enriched,
            plot = ., limitsize = FALSE)
 }
 
+
 ######## set sample and diagnosis in order #######  "AD_7264-2"
 set_sample_and_diagnosis_order <- function(obj,
                                            sample_order = c("AD_6998", "AD_7258","AD_7264-1", "AD_7264-2", "AD_7436",
@@ -225,3 +226,21 @@ set_sample_and_diagnosis_order <- function(obj,
   obj
 }
 
+
+# Define the function
+save_to_google_drive <- function(file_path, folder_link) {
+  library(googledrive)
+
+  # Authenticate and set up your Google Drive
+  drive_auth()
+
+  # Extract the folder ID from the provided link
+  extracted_id <- sub(".*/folders/(.*)", "\\1", folder_link)
+
+  # Set the extracted folder ID as the target folder
+  target_folder <- drive_get(as_id(extracted_id))
+
+  # Upload the PDF file to the target folder
+  drive_upload(file_path, name = basename(file_path), path = target_folder$id)
+
+}
