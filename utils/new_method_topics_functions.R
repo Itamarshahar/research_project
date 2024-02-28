@@ -105,7 +105,7 @@ percent_cells_exp_gene_in_topic_mat<-function(count_mat, l_mat, number_of_chunks
 df_pos_des<-function(obj, reweighted_f, fitted_model, assay="RNA", organism="mmu"){
   df_pos_des<-df_gene_scores(obj, reweighted_f, fitted_model, assay, organism) %>% dplyr::filter(reweighted_gene_score>0)
   df_pos_des<-df_pos_des %>% group_by(topic) %>%
-    mutate(z_score_log=((log(reweighted_gene_score) - mean(log(reweighted_gene_score))) / sd(log(reweighted_gene_score)))) %>%
+    dplyr::mutate(z_score_log=((log(reweighted_gene_score) - mean(log(reweighted_gene_score))) / sd(log(reweighted_gene_score)))) %>%
     arrange(topic, desc(z_score_log))
   return(df_pos_des)
 }
