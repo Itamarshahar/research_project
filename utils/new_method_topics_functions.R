@@ -3,21 +3,42 @@
 ###################################################
 #reweighted_f<-topic_reweight_f(fit$F)
 #df<-df_pos_des(obj, reweighted_f, fit)
-#des_df<-df %>% filter(z_score_log > 1 & percent_cells>0.01) 
+#des_df<-df %>% filter(z_score_log > 1 & percent_cells>0.01)
 
 #############################################
 ################# libraries #################
 #############################################
-library(Seurat)
-library(fastTopics)
-library(Matrix)
-library(ggcorrplot)
-library(gplots)
-library(ltm)
-library(ggplotify)
-library(tidyverse)
-source("./utils/pathway_analysis_funcs.R")
-source("./utils/pathways.analysis.gilad.R")
+load_libraries <- function() {
+  library(Seurat)
+  library(fastTopics)
+  library(Matrix)
+  library(ggcorrplot)
+  library(gplots)
+  library(ltm)
+  library(ggplotify)
+  library(magrittr)
+  library(reshape2)
+  library(tibble)
+  library(dplyr)
+  library(tidyverse)
+  library(S4Vectors)
+  source("./utils/pathway_analysis_funcs.R")
+  source("./utils/pathways.analysis.gilad.R")
+}
+# library(Seurat)
+# library(fastTopics)
+# library(Matrix)
+# library(ggcorrplot)
+# library(gplots)
+# library(ltm)
+# library(ggplotify)
+# library(magrittr)
+# library(reshape2)
+# library(tibble)
+# library(dplyr)
+# library(tidyverse)
+# source("./utils/pathway_analysis_funcs.R")
+# source("./utils/pathways.analysis.gilad.R")
 ###############################################################
 ################# create reweighted F matrix  #################
 ###############################################################
@@ -40,16 +61,16 @@ topic_reweight_f<-function(f_matrix, upper_quantile=0.8, lower_quantile=0.5){
     lower_quantile_other_topics<-apply(all_other_topics_mat, 1, function(x){quantile(x, lower_quantile)})
     log_ratio_ours_vs_upper<-log(cur_topic_as_mat+1e-15) - log(upper_quantile_other_topics+1e-15)
     log_ratio_ours_vs_lower<-log(cur_topic_as_mat+1e-15) - log(lower_quantile_other_topics+1e-15)
-    reweighted_f[, topic_idx]<- log_ratio_ours_vs_upper * 
-      ifelse(log_ratio_ours_vs_lower<0, Inf, (f_matrix[, logical_vec_curr_idx]*log_ratio_ours_vs_lower)^sign(log_ratio_ours_vs_upper)) 
-  } 
+    reweighted_f[, topic_idx]<- log_ratio_ours_vs_upper *
+      ifelse(log_ratio_ours_vs_lower<0, Inf, (f_matrix[, logical_vec_curr_idx]*log_ratio_ours_vs_lower)^sign(log_ratio_ours_vs_upper))
+  }
   return(reweighted_f)
 }
 
 ##############################################################################
 ########## calculate percent expression of each gene in each topic  ##########
 ##############################################################################
-# For each topic (i) and gene (j), calculates the percent of cells in topic i 
+# For each topic (i) and gene (j), calculates the percent of cells in topic i
 # that express gene j. Returns a matrix (genes, topics) of those values.
 # count_mat - obj[['RNA']]@counts, matrix with the expression of genes across cells. Must have - rows = genes, cols = cells.
 # l_mat - fitted_model$L, the L matrix of the topic modeling. Must have rows = cells, cols = topics.
@@ -74,7 +95,7 @@ percent_cells_exp_gene_in_topic_mat<-function(count_mat, l_mat, number_of_chunks
 ################# create DEs df with all relevant info  #################
 #########################################################################
 # Returns a df of positive (reweighted_gene_score>0) DE genes with their name,
-# original score, new reweighted score, percent of cells expression that gene in the 
+# original score, new reweighted score, percent of cells expression that gene in the
 # topic, gene_id and z score across the log of the reweighted scores.
 # obj - the object relevant to the topics.
 # reweighted_f - the new F', returned from the function - topic_reweight_f().
@@ -82,14 +103,14 @@ percent_cells_exp_gene_in_topic_mat<-function(count_mat, l_mat, number_of_chunks
 # assay - object assay to take the count from
 # organism - for gene name conversion
 df_pos_des<-function(obj, reweighted_f, fitted_model, assay="RNA", organism="mmu"){
-  df_pos_des<-df_gene_scores(obj, reweighted_f, fitted_model, assay, organism) %>% filter(reweighted_gene_score>0)
-  df_pos_des<-df_pos_des %>% group_by(topic) %>% 
+  df_pos_des<-df_gene_scores(obj, reweighted_f, fitted_model, assay, organism) %>% dplyr::filter(reweighted_gene_score>0)
+  df_pos_des<-df_pos_des %>% group_by(topic) %>%
     mutate(z_score_log=((log(reweighted_gene_score) - mean(log(reweighted_gene_score))) / sd(log(reweighted_gene_score)))) %>%
     arrange(topic, desc(z_score_log))
   return(df_pos_des)
 }
 
-# Returns a df of all genes names, original score, new reweighted score and percent 
+# Returns a df of all genes names, original score, new reweighted score and percent
 # of cells expression that gene in the topic, gene_id.
 # obj - the object relevant to the topics.
 # reweighted_f - the new F', returned from the function - topic_reweight_f().
@@ -108,7 +129,7 @@ df_gene_scores<-function(obj, reweighted_f, fitted_model, assay="RNA", organism=
     dplyr::select(gene, topic, gene_score)
   # create df of gene name, topic, gene id, reweighted_gene_score & original gene score
   de_gene<-reweighted_gene_score %>%
-    dplyr::left_join(gene_scores, by = c("gene", "topic")) %>% 
+    dplyr::left_join(gene_scores, by = c("gene", "topic")) %>%
     dplyr::left_join(percent_cells, by = c("gene", "topic"))
   de_gene<-de_gene %>% dplyr::mutate(id=GeneIdMapping(organism=organism)$ids[gene])
   return(de_gene)
@@ -118,7 +139,7 @@ df_gene_scores<-function(obj, reweighted_f, fitted_model, assay="RNA", organism=
 # Maps genes to their IDs according to the organism.
 GeneIdMapping <- function(organism = c("hsa", "mmu")) {
   organism = match.arg(organism)
-  
+
   if (organism == "hsa") {
     suppressPackageStartupMessages(require(org.Hs.eg.db))
     df <- suppressMessages(AnnotationDbi::select(org.Hs.eg.db, keys(org.Hs.eg.db, "ENTREZID"), columns=c("SYMBOL","ENTREZID")))
@@ -137,21 +158,21 @@ GeneIdMapping <- function(organism = c("hsa", "mmu")) {
 # genes_of_interest - vector of genes, for example - the concatenation of the DEs of all topics.
 # Performs matrix multiplication - l_mat * count_mat = matrix with topics as rows and genes as columns.
 # Each cell in that matrix is the estimated expression of that gene in that topic across all cells in the data.
-heatmap_topic_gene_expression<-function(count_mat, l_mat, genes_of_interest, filename=NULL){
+heatmap_topic_gene_expression<-function(count_mat, l_mat, genes_of_interest){#}, filename=NULL){
   preprocessed_count_mat<-count_mat[, genes_of_interest]
   genes_topics_mat<-l_mat %*% preprocessed_count_mat
   genes_topics_mat<-sweep(genes_topics_mat, 1, colSums(t(l_mat)), "/")
   colnames(genes_topics_mat)<-colnames(preprocessed_count_mat)
   title<-"Scaled Average Gene Expression Per Topic"
   pheatmap::pheatmap(t(genes_topics_mat[,]), cluster_rows=FALSE, cluster_cols=FALSE, display_numbers = FALSE,
-           number_format="%.4f", scale = "row", show_rownames=FALSE, main=title, filename = filename)
+           number_format="%.4f", scale = "row", show_rownames=FALSE, main=title)#, filename = filename)
   return(genes_topics_mat)
 }
 
 ###############################################################
 #################### DEs ROC visualization ####################
 ###############################################################
-# In case of ground truth, for example - having matching cluster-topic pairs and 
+# In case of ground truth, for example - having matching cluster-topic pairs and
 # knowing the cluster DEs, a ROC can be plotted.
 # all_genes_names - the universe, the whole pool of genes - rownames(obj[["RNA"]]@count).
 # topic_des - a df with all topic DEs (positive & negative, across all topics).
@@ -159,10 +180,10 @@ heatmap_topic_gene_expression<-function(count_mat, l_mat, genes_of_interest, fil
 # cur_topic - the topic we are interested in.
 # cur_cluster - the cluster we are interested in.
 roc_cluster_topic_des<-function(all_genes_names, topic_des, cluster_des, cur_topic, cur_cluster){
-  cluster_des<-cluster_des %>% filter(cluster==cur_cluster & avg_log2FC > 0)
-  topic_des<-topic_des %>% filter(topic==cur_topic)
+  cluster_des<-cluster_des %>% dplyr::filter(cluster==cur_cluster & avg_log2FC > 0)
+  topic_des<-topic_des %>% dplyr::filter(topic==cur_topic)
   rownames(topic_des)<-topic_des$gene
-  topic_des_positive<-topic_des %>% filter(reweighted_gene_score>0)
+  topic_des_positive<-topic_des %>% dplyr::filter(reweighted_gene_score>0)
   df<-data.frame(gene=all_genes_names, label=FALSE, prediction=-100)
   rownames(df)<-df$gene
   df[df$gene %in% cluster_des$gene, ]$label<-TRUE
@@ -174,7 +195,7 @@ roc_cluster_topic_des<-function(all_genes_names, topic_des, cluster_des, cur_top
   points_coord<-return_roc_thresholds(roc_curve, topic_des_positive)
   optimal_point<-coords(roc_curve, "best")
   title<-paste("Cluster=", cur_cluster, "Topic=", cur_topic)
-  top_n<-topic_des_positive %>% filter(reweighted_gene_score > as.numeric(optimal_point[1])) %>% nrow()
+  top_n<-topic_des_positive %>% dplyr::filter(reweighted_gene_score > as.numeric(optimal_point[1])) %>% nrow()
   sub_title<-paste("THRESHOLD=", optimal_point[1], ", TOP_N=", top_n, ", FPR/1-SPECIFICITY=", (1-optimal_point[2]), ", SENSITIVITY/TPR=", optimal_point[3])
   par(pty="s")
   plot(roc_curve, col=1, lwd=4, legacy.axes=TRUE, print.thres=points_coord, print.thres.pch=16, print.thres.col="red", print.thres.cex=0.6, srt=110)
@@ -183,3 +204,15 @@ roc_cluster_topic_des<-function(all_genes_names, topic_des, cluster_des, cur_top
 }
 
 
+run_de_flow <- function (obj, fit, assay="RNA", organism="hsa"){
+  reweighted_f<-topic_reweight_f(fit$F)
+  df<-df_pos_des(obj, reweighted_f, fit, assay=assay, organism=organism)
+  des_df<-df %>% dplyr::filter(z_score_log > 1 & percent_cells>0.01)
+  return (des_df)
+}
+
+des_df_hipp <- run_de_flow(obj=obj_hipo, fit=fit_hipo)
+#des_df_cortex <- run_de_flow(obj=obj_cortex, fit=fit_cortex)
+#reweighted_f<-topic_reweight_f(fit$F)
+#df<-df_pos_des(obj, reweighted_f, fit)
+#des_df<-df %>% filter(z_score_log > 1 & percent_cells>0.01)
