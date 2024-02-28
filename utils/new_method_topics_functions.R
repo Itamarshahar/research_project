@@ -204,14 +204,15 @@ roc_cluster_topic_des<-function(all_genes_names, topic_des, cluster_des, cur_top
 }
 
 
-run_de_flow <- function (obj, fit, assay="RNA", organism="hsa"){
+run_de_flow <- function (obj, fit, assay="RNA", organism="hsa", z_score_log_val =1, percent_cells_val = 0.01){
   reweighted_f<-topic_reweight_f(fit$F)
   df<-df_pos_des(obj, reweighted_f, fit, assay=assay, organism=organism)
-  des_df<-df %>% dplyr::filter(z_score_log > 1 & percent_cells>0.01)
+  des_df<-df %>% dplyr::filter(z_score_log > z_score_log_val & percent_cells > percent_cells_val)
   return (des_df)
 }
 
 des_df_hipp <- run_de_flow(obj=obj_hipo, fit=fit_hipo)
+des_df_cortex <- read.csv("/Volumes/habib-lab/shmuel.cohen/microglia/objects/DE_cortex_X15.csv")
 #des_df_cortex <- run_de_flow(obj=obj_cortex, fit=fit_cortex)
 #reweighted_f<-topic_reweight_f(fit$F)
 #df<-df_pos_des(obj, reweighted_f, fit)
