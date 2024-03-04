@@ -1,7 +1,4 @@
 ########
-
-
-
 generate_k_to_genes_table <- function(de_table){
   k_to_genes_table <- lapply(1:15, function(i){
   de_table[de_table$topic == glue::glue("k{i}"), ] %>%
@@ -30,7 +27,7 @@ generate_de_objects <- function(des, all_genes){
 
 
 
-generate_de_plots <- function(k_to_genes_table, path_to_objects, path_to_plot="/Volumes/habib-lab/shmuel.cohen/microglia/plots/Plots_for_k=15/pathways/pathways_heatmaps.pdf") {
+generate_pathways_plots <- function(k_to_genes_table, path_to_objects, path_to_plot="/Volumes/habib-lab/shmuel.cohen/microglia/plots/Plots_for_k=15/pathways/pathways_heatmaps.pdf") {
 path_to_plot <- "/Volumes/habib-lab/shmuel.cohen/microglia/plots/Plots_for_k=15/pathways/pathways_heatmaps.pdf"
 pdf(path_to_plot, width = 20, height = 8)
 for (topic in names(k_to_genes_table)){
@@ -77,5 +74,5 @@ run_pathways <- function(path_to_fit="/Volumes/habib-lab/shmuel.cohen/microglia/
       if (generate_objects){
         generate_de_objects(k_to_genes_table, all_genes)
       }
-      generate_de_plots(k_to_genes_table, path_to_objects, path_to_plot)
+      generate_pathways_plots(k_to_genes_table, path_to_objects, path_to_plot)
 }

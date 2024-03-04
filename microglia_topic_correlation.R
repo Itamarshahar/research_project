@@ -27,7 +27,6 @@ load_libraries <- function() {
   library(stringr)
 }
 
-
 generate_all_permutations <- function(lst) {
   # Initialize an empty vector to store the permutations
   all_permutations <- character(0)
@@ -56,7 +55,7 @@ generate_fits_list <- function(paths) {
   return(fits_list)
 }
 
-  helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", correlation_method = "pearson") {
+helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", correlation_method = "pearson") {
   print(glue("Running topic evaluation flow for {type} and {correlation_method}"))
   col_fun = colorRamp2(c(-1, 0, 1), c("blue", "white", "red"))
   col_fun(seq(-20, 20))
@@ -100,8 +99,6 @@ generate_fits_list <- function(paths) {
   }
 
 }
-
-
 
 run_topic_evaluation <- function(fit_list, path_to_plots, correlation_method="pearson") {
   print("Loading libraries")

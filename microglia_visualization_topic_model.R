@@ -493,7 +493,6 @@ run_main_flow <- function(obj, fit, path_to_plots) {
   
 }
 
-
 main <- function() {
   # path_to_fit <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/k10/objects/fitted_k_10.rds"
   # path_to_obj <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/SuperAgers_n=20/5_percent/objects/five_prec.h5seurat"
@@ -503,7 +502,5 @@ main <- function() {
   loads <- load_objects(path_to_fit, path_to_obj)
   run_main_flow(loads$obj, loads$fit, path_to_plots)
 }
-
-#main()
 
 

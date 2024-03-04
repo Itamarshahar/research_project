@@ -66,6 +66,11 @@ run_correlation_with_cortex_flow <- function() {
                                         de_cortex="/Volumes/habib-lab/shmuel.cohen/microglia/objects/DE_cortex_X15.csv")
 }
 
+
+run_pathways_flow <- function (){
+  source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/microglia_pathways.R")
+  run_pathways()
+}
 main <- function(path_to_obj, run_filler= "NA", run_subset ="NA") {
   path_to_obj <- "/Users/shmuel/SuperAgerRemoveSample7264-2Microglia.h5seurat"
   path_to_plots <- "/Volumes/habib-lab/shmuel.cohen/microglia/plots/"
@@ -117,9 +122,9 @@ main <- function(path_to_obj, run_filler= "NA", run_subset ="NA") {
   run_correlation_with_cortex_flow()
   # generate boxplot
   run_generate_box_plot()
-  run_generate_box_plot()
 
   #run pathways
+  run_pathways_flow
   #...
   
 }
