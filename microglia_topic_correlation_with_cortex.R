@@ -1,3 +1,4 @@
+# this file should run the whole correlation flow of microglia topics of hippocampus topics with cortex topics
 load_libraries <- function()
 {
   library(RColorBrewer)

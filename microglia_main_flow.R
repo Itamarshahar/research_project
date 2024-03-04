@@ -34,7 +34,37 @@ run_transformation <- function(obj) {
   )
   return(obj)
 }
+run_generate_box_plot <- function (obj, fit){
+  source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/boxplot.R")
+  generate_box_plot(obj, fit)
+}
 
+run_de_flow <- function(hippocampus_exist=FALSE){
+  generate_de <- function (obj, fit, assay="RNA", organism="hsa", z_score_log_val =1, percent_cells_val = 0.01){
+  reweighted_f<-topic_reweight_f(fit$F)
+  df<-df_pos_des(obj, reweighted_f, fit, assay=assay, organism=organism)
+  des_df<-df %>% dplyr::filter(z_score_log > z_score_log_val & percent_cells > percent_cells_val)
+  return (des_df)
+}
+  if (!hippocampus_exist) {
+   de_hippocampus_X15 <- generate_de(obj = readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/filtered_microglia.rds"),
+                                    fit = readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds"))
+    saveRDS(de_hippocampus_X15, "/Volumes/habib-lab/shmuel.cohen/microglia/objects/DE_hippocampus_X15_.rds")
+  }
+  else {
+          print("de object exists")
+  }
+
+}
+
+run_correlation_with_cortex_flow <- function() {
+  path <- "/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/microglia_topic_correlation_with_cortex.R"
+  source(path)
+  run_corralation_with_cortex(fit_hippo="/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds",
+                                        fit_cortex="/Volumes/habib-lab/shmuel.cohen/microglia/objects/cortex_all_microglia_topic_fit.15.RDS",
+                                        de_hippocampus="/Volumes/habib-lab/shmuel.cohen/microglia/objects/DE_hippocampus_X15.rds",
+                                        de_cortex="/Volumes/habib-lab/shmuel.cohen/microglia/objects/DE_cortex_X15.csv")
+}
 
 main <- function(path_to_obj, run_filler= "NA", run_subset ="NA") {
   path_to_obj <- "/Users/shmuel/SuperAgerRemoveSample7264-2Microglia.h5seurat"
@@ -82,32 +112,19 @@ main <- function(path_to_obj, run_filler= "NA", run_subset ="NA") {
   
   #check correlation vs cortex topics
   #todo - remove or enter to condition
-  source("~/Desktop/project/research_project/correlation_by_genes.R")
-  cortex_fit_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/all_microglia_topic_fit.15.RDS")
-  correlation_with_cortex(obj = obj,
-                          cortex_fit_15 = cortex_fit_15,
-                          fits_list = fit_files_paths,
-                          path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_with_cortex_1000t/",
-                          path_to_predicted = "/Volumes/habib-lab/shmuel.cohen/microglia/objects/predict_1000t.RDS")
-  
-  #run de, use Adi function
-  source("~/Desktop/project/research_project/compare_by_de.R")
-  hippocampus_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/microglia_fitted_topic_model_k_15.rds")
-  cortex_15 <- readRDS("/Volumes/habib-lab/shmuel.cohen/microglia/objects/cortex_all_microglia_topic_fit.15.RDS")
-  for (name in c("column", "row", "NA") ){
-    generate_intersection_gene_heatmap(obj= obj,
-              hippocampus =  hippocampus_15,
-              cortex = cortex_15,
-              #path_to_plots = "/Users/shmuel/microglia/plots/gene_correlation/correlation_de_adi_15/",
-              path_to_plots = "/Volumes/habib-lab/shmuel.cohen/microglia/plots/correlation/de/",
-              scale = name)  
-    
-  }
-  
+
+  run_de_flow()
+  run_correlation_with_cortex_flow()
+  # generate boxplot
+  run_generate_box_plot()
+  run_generate_box_plot()
+
   #run pathways
   #...
   
 }
+
+
 main()
 
 ###########3

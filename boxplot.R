@@ -1,12 +1,4 @@
 #box plot- edit of code from Roi, 
-comparisons_specific <- list(
-  'X15.k1' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
-  'X15.k2' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
-  'X15.k3' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
-                   
-  'X15.k15' = list(c('HA', 'MCI'), c('HA', 'AD')),
-  'X15.k9' = list(c('HA', 'SuperAgers'))
-  )
 
 
 generate_comparisons_specific_values <- function(k, comparisons=NULL){
@@ -42,7 +34,7 @@ add_topics_to_metadata <- function(obj, fits) {
 }
 
 
-print_box_plot <- function(obj, fit, topic_dir, comparisons_specific, columns_list=NULL, size = 60) {
+print_box_plot <- function(obj, fit, comparisons_specific, topic_dir="/Volumes/habib-lab/shmuel.cohen/microglia/plots/Plots_for_k=15/boxplot", columns_list=NULL, size = 60) {
   k <- 1
   obj_with_list <- add_topics_to_metadata(obj, list(X15 = fit))
   obj <- obj_with_list[["obj"]]
@@ -96,11 +88,22 @@ generate_columns_list <- function(k, selected_topics = list(1)) {
 }
 
 
-columns_list <- generate_columns_list(k=15, list(3, 5, 6, 7, 8, 9, 11, 13 ,14 ,15))
-print_box_plot(obj = obj,
-               fit = hippocampus_15,
-               topic_dir = topic_dir,
-               comparisons_specific = comparisons_specific, 
-               columns_list=columns_list, 
-               size = 30)
 
+generate_box_plot <- function (obj, fit, topic_dir="/Volumes/habib-lab/shmuel.cohen/microglia/plots/Plots_for_k=15/boxplot", columns_list=NULL, size = 60)
+{
+  comparisons_specific <- list(
+  'X15.k1' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
+  'X15.k2' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
+  'X15.k3' = list(c('HA', 'MCI'), c('HA', 'AD'), c('HA', 'SuperAgers'), c('HA', 'Young CTRL'), c('MCI', 'AD'), c('MCI', 'SuperAgers'), c('MCI', 'Young CTRL'), c('AD', 'SuperAgers'), c('AD', 'Young CTRL'), c('SuperAgers', 'Young CTRL')),
+
+  'X15.k15' = list(c('HA', 'MCI'), c('HA', 'AD')),
+  'X15.k9' = list(c('HA', 'SuperAgers'))
+  )
+  columns_list <- generate_columns_list(k=15, list(3, 5, 6, 7, 8, 9, 11, 13 ,14 ,15))
+  print_box_plot(obj = obj,
+               fit = fit,
+               topic_dir = topic_dir,
+               comparisons_specific = comparisons_specific,
+               columns_list=columns_list,
+               size = 30)
+}
