@@ -37,7 +37,7 @@ for (topic in names(k_to_genes_table)){
   # if (topic %in% c("k13", "k9")) {
   #   next
   # } <-
-  path <- glue("{path_to_objects}/pathway_topic_{topic}.RDS")
+  path <- file.path(path_to_objects, glue("pathway_topic_", topic, ".RDS"))
   pathway_result <- readRDS(path)
   heatmap <-strsplit(pathway_result@result$geneID, "/") %>% setNames(., pathway_result@result$Description) %>%
     stack() %>% table() %>%
@@ -69,13 +69,13 @@ run_pathways <- function(path_to_fit="/Volumes/habib-lab/shmuel.cohen/microglia/
                           path_to_objects="/Volumes/habib-lab/shmuel.cohen/microglia/objects/",
                          generate_objects = TRUE
                           ) {
-  load_libraries()
-  fit <- readRDS(path_to_fit)
-  de_table <- readRDS(path_to_de)
-  all_genes <- rownames(fit$F)
-  k_to_genes_table <- generate_k_to_genes_table(de_table)
-  if (generate_objects){
-    generate_de_objects(k_to_genes_table, all_genes)
-  }
-  generate_de_plots(k_to_genes_table, path_to_objects, path_to_plot)
+      load_libraries()
+      fit <- readRDS(path_to_fit)
+      de_table <- readRDS(path_to_de)
+      all_genes <- rownames(fit$F)
+      k_to_genes_table <- generate_k_to_genes_table(de_table)
+      if (generate_objects){
+        generate_de_objects(k_to_genes_table, all_genes)
+      }
+      generate_de_plots(k_to_genes_table, path_to_objects, path_to_plot)
 }
