@@ -3,6 +3,8 @@ check_dependencies <- function() {
   if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
+  if (!requireNamespace("glmGamPoi", quietly = TRUE)) {
+    BiocManager::install("glmGamPoi")
 }
 
 load_libraries <- function() {
@@ -87,6 +89,7 @@ main <- function(path_to_obj, run_filler = "NA", run_subset = "NA", generate_plo
   for (resolution in c(0.1, 0.3, 0.6, 0.9)) {
     obj <- generate_preprocessed_obj(obj = obj,
                                      resolution = resolution,
+                                     sctransform_data = TRUE,
                                      normalize_data = FALSE,
                                      find_variable_features = FALSE,
                                      scale_data = FALSE,
@@ -167,14 +170,14 @@ obj <- RunPCA(obj, npcs = 30)
 saveRDS(obj,
         "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/super_agers_astrocytes.rds")
 
-path_to_h5 <- "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/super_agers_astrocytes.h5Seurat"
+# path_to_h5 <- "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/super_agers_astrocytes.h5Seurat"
 # h5createFile(path_to_h5)
 # h5write(obj, path_to_h5, "obj")
 
 
-SaveH5Seurat(object = obj,
-             filename = path_to_h5,
-             overwrite = TRUE)
+# SaveH5Seurat(object = obj,
+#              filename = path_to_h5,
+#              overwrite = TRUE)
 
 # dims_before <- get_number_of_cells("/Volumes/habib-lab/shmuel.cohen/microglia/objects/SuperAgerRemoveSample7264-2Microglia.h5seurat")
 # dims_after <-  get_number_of_cells("/Volumes/habib-lab/shmuel.cohen/microglia/objects/archive/filtered_microglia.h5Seurat")
