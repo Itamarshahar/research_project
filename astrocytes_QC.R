@@ -12,7 +12,10 @@ get_markers.of.ct.brain <- function() {
     GABAergic = c("MEG3", "PVALB", "SST", "VIP", "KIT", "GAD2", "NXPH1", "LHFPL3", "GRIK1", "ADARB2") %>% unique(),
     Glutamatergic = c("SLC17A7", "RORB", "TOX", "FOXP2", "CUX2", "RALYL", "KCNIP4", "CBLN2", "LDB2", "KCNQ5") %>% unique(),
     Monocytes = c('CCR2', 'MSR1', "S100A4", "CD63") %>% unique(), #"VCAN"
-    Macrophages = c('CD86', 'CSF1R', "MRC1", "CD74", "CDK1") %>% unique()) #"CD63"
+    Macrophages = c('CD86', 'CSF1R', "MRC1", "CD74", "CDK1") %>% unique(),#"CD63"
+    # Neurogenesis=c("DCX", "SOX2", "SOX4", "TOP2A", "EOMES", "NES", "VIM", "PAX6", "HES1", "ASCL1") %>% unique() # , "GFAP"
+    RadialGlia=c("NES", "VIM", "PAX6", "HES1") %>% unique()
+  )
 }
 
 run_QC_flow <- function(obj,
@@ -24,47 +27,55 @@ run_QC_flow <- function(obj,
 }
 
 generate_preprocessed_obj <- function(obj,
-                                      resolution = 0.2,
-                                      run_QC = TRUE,
-                                      sctransform_data = TRUE,
-                                      normalize_data = TRUE,
-                                      find_variable_features = TRUE,
-                                      scale_data = TRUE,
-                                      run_pca = TRUE,
-                                      find_neighbors = TRUE,
-                                      run_umap = TRUE,
-                                      find_clusters = TRUE) {
-  if (run_QC) { run_QC_flow(obj = obj, add_mt_precentage = TRUE) }
-  if (sctransform_data) {
+                                      resolution = 0.3,
+                                      run_QC = FALSE,
+                                      run_sctransform_data = FALSE,
+                                      run_normalize_data = FALSE,
+                                      run_scale_data = FALSE,
+                                      run_find_variable_features = FALSE,
+                                      run_pca = FALSE,
+                                      run_find_neighbors = FALSE,
+                                      run_umap = FALSE,
+                                      run_find_clusters = FALSE) {
+  if (run_QC) {
+    log_info("Running QC")
+    run_QC_flow(obj = obj, add_mt_precentage = TRUE) }
+  if (run_sctransform_data) {
+    log_info("Running SCTransform")
     obj <- SCTransform(obj = obj,
                        variable.features.n = 5000
     )
+    DefaultAssay(obj) <- "SCT"
   }
-
-  if (normalize_data && !sctransform_data) {
+  if (run_normalize_data && !run_sctransform_data) {
+    log_info("Running NormalizeData")
     obj <- NormalizeData(obj)
   }
-  if (scale_data && !sctransform_data) {
+  if (run_scale_data && !run_sctransform_data) {
+    log_info("Running ScaleData")
     obj <- ScaleData(obj)
   }
-  if (find_variable_features) {
+  if (run_find_variable_features) {
+    log_info("Running FindVariableFeatures")
     obj <- FindVariableFeatures(obj)
   }
-
   if (run_pca) {
+    log_info("Running RunPCA")
     obj <- RunPCA(obj, npcs = 30)
   }
-  if (find_neighbors) {
+  if (run_find_neighbors) {
+    log_info("Running FindNeighbors")
     obj <- FindNeighbors(obj, dims = 1:15)
   }
   if (run_umap) {
+    log_info("Running RunUMAP")
     obj <- RunUMAP(obj, dims = 1:15)
-
   }
-  if (find_clusters) {
-    obj <- FindClusters(obj, resolution = resolution)
+  if (run_find_clusters) {
+    log_info("Running FindClusters")
+    obj <- FindClusters(object=obj, resolution = resolution)
   }
-  DefaultAssay(obj) <- "RNA"
+  # DefaultAssay(obj) <- "RNA"
   return(obj)
 }
 
@@ -89,7 +100,8 @@ plot_QC_results <- function(obj, path_to_plots) {
 }
 
 plot_umap_preproccess <- function(obj,
-                                  resolution = 0.2) {
+                                  path_to_plots="/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/QC_with_sctransform/",
+                                  resolution = 0.3) {
   plot1 <- DimPlot(obj, label = TRUE) + theme(
     axis.line = element_blank(),   # Remove axis lines
     axis.text = element_blank(),   # Remove axis text
@@ -122,7 +134,7 @@ plot_umap_preproccess <- function(obj,
 
 plot_preprocess_results <- function(obj,
                                     path_to_plots = "/Volumes/habib-lab/shmuel.cohen/astrocytes/plots",
-                                    resolution = 0.2) {
+                                    resolution = 0.3) {
   plot_umap_preproccess(obj = obj,
                         resolution = resolution)
   ggsave(glue::glue("dotplot_markers_astrocytes_resolution", "_", resolution, ".pdf"),
