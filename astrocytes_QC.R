@@ -102,13 +102,13 @@ plot_QC_results <- function(obj, path_to_plots) {
 plot_umap_preproccess <- function(obj,
                                   path_to_plots="/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/QC_with_sctransform/",
                                   resolution = 0.3) {
-  plot1 <- DimPlot(obj, label = TRUE) + theme(
+  plot1 <- DimPlot(obj, group.by = SEURAT_CLUSTERS, label = TRUE) + theme(
     axis.line = element_blank(),   # Remove axis lines
     axis.text = element_blank(),   # Remove axis text
     axis.title = element_blank()   # Remove axis titles
   )
   # Create the second plot
-  plot2 <- DimPlot(obj, group.by = "DiagnosisSample", label = TRUE, label.size = 2) + theme(
+  plot2 <- DimPlot(obj, group.by = DIAGNOSIS_SAMPLE, label = TRUE, label.size = 2) + theme(
     axis.line = element_blank(),   # Remove axis lines
     axis.text = element_blank(),   # Remove axis text
     axis.title = element_blank()   # Remove axis titles

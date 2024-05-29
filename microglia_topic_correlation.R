@@ -19,7 +19,7 @@ load_libraries <- function() {
   # library(ggpointdensity)
   library(reshape2)
   library(glue)
-  source("utils.R")
+  source("./utils/utils.R")
   library(ComplexHeatmap)
   library(circlize)
   # library(combinat)
@@ -79,8 +79,8 @@ helper_topic_evaluation <- function(fits_list, path_to_plots, type = "cells", co
       correlation <- claculate_correlation(fit_k_left$F, fit_k_right$F, method = correlation_method)
       file_name <- glue('{correlation_method}_corrlation_between_genes_')
     }
-    
-    pdf(glue("{path_to_plots}{file_name}k={k_left}_with_k={k_right}.pdf"))
+    title <- glue::glue("The Corralation Between K={k_left} with K={k_right} Topics")
+    pdf(file=glue::glue(path_to_plots, file_name, "k=", k_left, "_with_k=", k_right, ".pdf"), title = title)
     draw(Heatmap(correlation,
                  cluster_rows = FALSE,
                  cluster_columns = FALSE,
@@ -109,3 +109,14 @@ run_topic_evaluation <- function(fit_list, path_to_plots, correlation_method="pe
 
 
 
+# fit_list <- c(
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_10.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_11.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_12.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_13.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_14.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_15.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_16.rds",
+#   "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/fitted_topic_model_k_17.rds"
+# )
+# run_topic_evaluation(fit_list = fit_list, path_to_plots = "/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/topic_evaluation/", correlation_method="pearson")

@@ -20,6 +20,8 @@ load_libraries <- function() {
   library(plotly)
   library(hrbrthemes)
   source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/utils/utils.R")
+  source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/utils/constants.R")
+  source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/astrocytes_QC.R")
   library(Matrix)
   library(fastTopics)
   library(cowplot)
@@ -28,7 +30,7 @@ load_libraries <- function() {
 }
 
 generate_astrocytes_filltered_obj <- function(obj, path_to_save=Null, to_save=TRUE) {
-  obj_subset <- subset(x = obj, subset = seurat_clusters %in% c(0, 1, 2, 3, 5, 6, 9, 10, 11, 12))
+  obj_subset <- subset(x = obj, subset = seurat_clusters %in% c(0, 1, 2, 3, 5, 6, 9, 10, 11, 12)) # Removing 4, 7, 8 clusters
   obj_subset <- subset(obj_subset, subset = nFeature_RNA > 200 & percent.mt < 10)
   if (to_save & path_to_save) {
     saveRDS(obj_subset, path_to_save)
@@ -122,8 +124,8 @@ helper_for_checks <- function() {
   load_libraries()
   path_to_obj <- "/Volumes/habib-lab/shmuel.cohen/astrocytes/objects/super_agers_astrocytes_sctransform.rds"
   path_to_plots <- "/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/QC_with_sctransform/"
-  check_dependencies()
-  load_libraries()
+  # check_dependencies()
+  # load_libraries()
   obj <- readRDS(path_to_obj)
 
   obj <- generate_preprocessed_obj(obj = obj,
