@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b557db8c-1cc1-4fdf-ad1b-cc5d6114775a" name="Changes" comment="adding the fillter proccess">
+      <change beforePath="$PROJECT_DIR$/microglia_visualization_topic_model.R" beforeDir="false" afterPath="$PROJECT_DIR$/microglia_visualization_topic_model.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_sctransform.R" beforeDir="false" afterPath="$PROJECT_DIR$/run_sctransform.R" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.R" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.R" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="R Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="rwrapper:///Seurat::VlnPlot" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="IlluminatedCloudWorkspaceSettings">
+    <option name="projectWorkspaceSettings">
+      <ProjectWorkspaceSettings>
+        <option name="anonymousApexSettings">
+          <AnonymousApexSettings>
+            <option name="savedDocuments">
+              <list>
+                <AnonymousApexSavedDocument>
+                  <option name="name" value="Anonymous Apex 1" />
+                </AnonymousApexSavedDocument>
+              </list>
+            </option>
+          </AnonymousApexSettings>
+        </option>
+        <option name="soqlQuerySettings">
+          <SoqlQuerySettings>
+            <option name="savedDocuments">
+              <list>
+                <SoqlQuerySavedDocument>
+                  <option name="name" value="SOQL Query 1" />
+                </SoqlQuerySavedDocument>
+              </list>
+            </option>
+          </SoqlQuerySettings>
+        </option>
+      </ProjectWorkspaceSettings>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2Ui0FvM1mBoo0KvMesByhYFJZTo" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/QC_with_sctransform&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.r.configuration.RSettingsProjectConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+    ],
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;R&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/deprecated" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="run_visualization_topic_model" type="R">
+      <r-file-path value="$PROJECT_DIR$/run_visualization_topic_model.R" />
+      <working-directory value="" />
+      <interpreter-arguments value="1 2 3" />
+      <script-arguments value="" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b557db8c-1cc1-4fdf-ad1b-cc5d6114775a" name="Changes" comment="" />
+      <created>1693406996876</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1693406996876</updated>
+      <workItem from="1693406999916" duration="3834000" />
+      <workItem from="1693483945978" duration="157000" />
+      <workItem from="1693484116958" duration="2268000" />
+      <workItem from="1693806442425" duration="5707000" />
+      <workItem from="1693815987842" duration="2057000" />
+      <workItem from="1693818054678" duration="1064000" />
+      <workItem from="1693819125082" duration="3952000" />
+      <workItem from="1693896245092" duration="94000" />
+      <workItem from="1693896347694" duration="230000" />
+      <workItem from="1693896584655" duration="61000" />
+      <workItem from="1693896656047" duration="224000" />
+      <workItem from="1693897014334" duration="373000" />
+      <workItem from="1693901618536" duration="110000" />
+      <workItem from="1693901738888" duration="781000" />
+      <workItem from="1693902534211" duration="65000" />
+      <workItem from="1693902619740" duration="493000" />
+      <workItem from="1693903120607" duration="847000" />
+      <workItem from="1693903977409" duration="1982000" />
+      <workItem from="1693906556130" duration="246000" />
+      <workItem from="1693906834407" duration="192000" />
+      <workItem from="1693907034078" duration="7303000" />
+      <workItem from="1693976686958" duration="27422000" />
+      <workItem from="1694162850730" duration="1121000" />
+      <workItem from="1694164000232" duration="73000" />
+      <workItem from="1694164079199" duration="266000" />
+      <workItem from="1694164350832" duration="91000" />
+      <workItem from="1694164446710" duration="38000" />
+      <workItem from="1694164489643" duration="185000" />
+      <workItem from="1694164679035" duration="30000" />
+      <workItem from="1694164712022" duration="621000" />
+      <workItem from="1694165363990" duration="128000" />
+      <workItem from="1694165516620" duration="1449000" />
+      <workItem from="1694412019597" duration="44183000" />
+      <workItem from="1694586556293" duration="74020000" />
+      <workItem from="1695217092055" duration="28509000" />
+      <workItem from="1695388436179" duration="4851000" />
+      <workItem from="1699866673395" duration="6395000" />
+      <workItem from="1701346726989" duration="3707000" />
+      <workItem from="1702370597280" duration="3767000" />
+      <workItem from="1703078155752" duration="10563000" />
+      <workItem from="1703165024682" duration="8852000" />
+      <workItem from="1704266131721" duration="6625000" />
+      <workItem from="1704373728308" duration="1904000" />
+      <workItem from="1704789850407" duration="432000" />
+      <workItem from="1704817947905" duration="13000" />
+      <workItem from="1705474410507" duration="15374000" />
+      <workItem from="1705577867392" duration="595000" />
+      <workItem from="1705599695417" duration="606000" />
+      <workItem from="1707894758789" duration="13848000" />
+      <workItem from="1708503023202" duration="12319000" />
+      <workItem from="1709020205647" duration="16443000" />
+      <workItem from="1709058224813" duration="609000" />
+      <workItem from="1709063171494" duration="133000" />
+      <workItem from="1709103246671" duration="8448000" />
+      <workItem from="1709115725107" duration="171000" />
+      <workItem from="1709286606075" duration="4201000" />
+      <workItem from="1709450861052" duration="671000" />
+      <workItem from="1709461441893" duration="1815000" />
+      <workItem from="1709533518849" duration="34567000" />
+      <workItem from="1715752243630" duration="30513000" />
+      <workItem from="1716357618015" duration="1749000" />
+      <workItem from="1716359624699" duration="58000" />
+      <workItem from="1716360165229" duration="22774000" />
+      <workItem from="1716982534478" duration="7019000" />
+      <workItem from="1717278450292" duration="833000" />
+    </task>
+    <task id="LOCAL-00017" summary="adding visualization to the DE">
+      <created>1693926998103</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1693926998103</updated>
+    </task>
+    <task id="LOCAL-00018" summary="adding the vkn plot">
+      <created>1693998892899</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1693998892900</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Fix the path to obj and DE">
+      <created>1694086379745</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1694086379747</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Fix the path to obj and DE">
+      <created>1694420673577</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1694420673577</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Fix the path to obj and DE">
+      <created>1694420683500</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1694420683500</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Fix the path to obj and DE">
+      <created>1694420760408</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1694420760408</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Fix the path to obj and DE">
+      <created>1694420819862</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1694420819862</updated>
+    </task>
+    <task id="LOCAL-00024" summary="add combine_topics_and_meta_data to the Utils.R">
+      <created>1694497339095</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1694497339096</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Scripting the run_visualization_topic_model.R">
+      <created>1694510912523</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1694510912523</updated>
+    </task>
+    <task id="LOCAL-00026" summary="adding the run_markers_in_topics_heatmap.R">
+      <created>1694511007204</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1694511007204</updated>
+    </task>
+    <task id="LOCAL-00027" summary="adding doc the run_visualization_topic_model.R">
+      <created>1694511477098</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1694511477098</updated>
+    </task>
+    <task id="LOCAL-00028" summary="adding doc the run_visualization_topic_model.R">
+      <created>1694530999945</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1694530999945</updated>
+    </task>
+    <task id="LOCAL-00029" summary="adding topic_eval">
+      <created>1694533323099</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1694533323100</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fixing bug">
+      <created>1694596494813</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1694596494814</updated>
+    </task>
+    <task id="LOCAL-00031" summary="adding functionality to the run_topic_evaluation.R">
+      <created>1694596569611</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1694596569611</updated>
+    </task>
+    <task id="LOCAL-00032" summary="removing redundancies">
+      <created>1694596600633</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1694596600633</updated>
+    </task>
+    <task id="LOCAL-00033" summary="fix typo">
+      <created>1694596617004</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1694596617004</updated>
+    </task>
+    <task id="LOCAL-00034" summary="adding the run_visualization_&#10;flow.R">
+      <created>1695207925262</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1695207925262</updated>
+    </task>
+    <task id="LOCAL-00035" summary="add the scatter plot flow">
+      <created>1695222087877</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1695222087877</updated>
+    </task>
+    <task id="LOCAL-00036" summary="add deprecations">
+      <created>1695303718212</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1695303718212</updated>
+    </task>
+    <task id="LOCAL-00037" summary="add deprecations">
+      <created>1695303727385</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1695303727385</updated>
+    </task>
+    <task id="LOCAL-00038" summary="add deprecations">
+      <created>1700151701243</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1700151701243</updated>
+    </task>
+    <task id="LOCAL-00039" summary="add deprecations">
+      <created>1700152749062</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152749063</updated>
+    </task>
+    <task id="LOCAL-00040" summary="add deprecations">
+      <created>1700152766136</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152766136</updated>
+    </task>
+    <task id="LOCAL-00041" summary="add deprecations">
+      <created>1700152789408</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1700152789408</updated>
+    </task>
+    <task id="LOCAL-00042" summary="add deprecations">
+      <created>1705480348175</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1705480348175</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Add utils.R">
+      <created>1707901579144</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1707901579144</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Deprecate Deprecated-correlation_genes_predict_func.R">
+      <created>1707904381126</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1707904381126</updated>
+    </task>
+    <task id="LOCAL-00045" summary="add Monocytes Macrophages markers to get_markers.of.ct.brain">
+      <created>1707918100827</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1707918100827</updated>
+    </task>
+    <task id="LOCAL-00046" summary="add Monocytes Macrophages markers to get_markers.of.ct.brain">
+      <created>1708507660917</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1708507660917</updated>
+    </task>
+    <task id="LOCAL-00047" summary="add Monocytes Macrophages markers to get_markers.of.ct.brain">
+      <created>1708507877330</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1708507877330</updated>
+    </task>
+    <task id="LOCAL-00048" summary="add utils">
+      <created>1709032965557</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1709032965557</updated>
+    </task>
+    <task id="LOCAL-00049" summary="add utils">
+      <created>1709033114121</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1709033114121</updated>
+    </task>
+    <task id="LOCAL-00050" summary="add adi's function flow + fix in the libararies in de function">
+      <created>1709113056431</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1709113056431</updated>
+    </task>
+    <task id="LOCAL-00051" summary="add &quot;dplyr::&quot; to mutate">
+      <created>1709113243036</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1709113243036</updated>
+    </task>
+    <task id="LOCAL-00052" summary="fixting run_de_flow">
+      <created>1709115892682</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1709115892682</updated>
+    </task>
+    <task id="LOCAL-00053" summary="deprecated-pathways.R">
+      <created>1709535745734</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1709535745736</updated>
+    </task>
+    <task id="LOCAL-00054" summary="add microglia pathways run">
+      <created>1709540138598</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1709540138598</updated>
+    </task>
+    <task id="LOCAL-00055" summary="add file.path to generate_de_plots()">
+      <created>1709540838194</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1709540838195</updated>
+    </task>
+    <task id="LOCAL-00056" summary="adding update to the correlation">
+      <created>1709564428582</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1709564428583</updated>
+    </task>
+    <task id="LOCAL-00057" summary="BIG HUGE UPDATE">
+      <created>1709567892525</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1709567892525</updated>
+    </task>
+    <task id="LOCAL-00058" summary="BIG HUGE UPDATE">
+      <created>1709568889875</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1709568889875</updated>
+    </task>
+    <task id="LOCAL-00059" summary="add the astrocytes_main_flow.R">
+      <created>1715753506329</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1715753506330</updated>
+    </task>
+    <task id="LOCAL-00060" summary="remove local path">
+      <created>1715773699991</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1715773699991</updated>
+    </task>
+    <task id="LOCAL-00061" summary="add astrocytes_QC.R">
+      <created>1715782274308</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1715782274308</updated>
+    </task>
+    <task id="LOCAL-00062" summary="add sctransform to astrocytes_main_flow.R">
+      <created>1715782326496</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1715782326496</updated>
+    </task>
+    <task id="LOCAL-00063" summary="add sctransform to astrocytes_main_flow.R">
+      <created>1715923672689</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1715923672690</updated>
+    </task>
+    <task id="LOCAL-00064" summary="adding the fillter proccess">
+      <created>1716385984554</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1716385984554</updated>
+    </task>
+    <task id="LOCAL-00065" summary="adding the fillter proccess">
+      <created>1716983845354</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1716983845355</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="adding topic_eval" />
+    <MESSAGE value="fixing bug" />
+    <MESSAGE value="adding functionality to the run_topic_evaluation.R" />
+    <MESSAGE value="removing redundancies" />
+    <MESSAGE value="fix typo" />
+    <MESSAGE value="adding the run_visualization_&#10;flow.R" />
+    <MESSAGE value="add the scatter plot flow" />
+    <MESSAGE value="add deprecations" />
+    <MESSAGE value="Add utils.R" />
+    <MESSAGE value="Deprecate Deprecated-correlation_genes_predict_func.R" />
+    <MESSAGE value="add Monocytes Macrophages markers to get_markers.of.ct.brain" />
+    <MESSAGE value="add utils" />
+    <MESSAGE value="add adi's function flow + fix in the libararies in de function" />
+    <MESSAGE value="add &quot;dplyr::&quot; to mutate" />
+    <MESSAGE value="fixting run_de_flow" />
+    <MESSAGE value="deprecated-pathways.R" />
+    <MESSAGE value="add microglia pathways run" />
+    <MESSAGE value="add file.path to generate_de_plots()" />
+    <MESSAGE value="adding update to the correlation" />
+    <MESSAGE value="BIG HUGE UPDATE" />
+    <MESSAGE value="add the astrocytes_main_flow.R" />
+    <MESSAGE value="remove local path" />
+    <MESSAGE value="add astrocytes_QC.R" />
+    <MESSAGE value="add sctransform to astrocytes_main_flow.R" />
+    <MESSAGE value="adding the fillter proccess" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding the fillter proccess" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="the-r-line">
+          <url>file://$PROJECT_DIR$/deprecated/deprecated-compare_by_de.R</url>
+          <line>52</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="the-r-line">
+          <url>file://$PROJECT_DIR$/deprecated/deprecated-compare_by_de.R</url>
+          <line>86</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="the-r-line">
+          <url>file://$PROJECT_DIR$/deprecated/deprecated-compare_by_de.R</url>
+          <line>88</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="the-r-line">
+          <url>file://$PROJECT_DIR$/astrocytes_QC.R</url>
+          <line>42</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

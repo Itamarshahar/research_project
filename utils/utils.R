@@ -228,3 +228,21 @@ save_to_google_drive <- function(file_path, folder_link) {
   drive_upload(file_path, name = basename(file_path), path = target_folder$id)
 
 }
+
+
+
+generate_names_for_fit_row_and_cols <- function(K, generate_single_name= FALSE, i=0) {
+  if (generate_single_name) {
+    relevant_k <- paste0("X.", K, ".k", i)
+  }
+  else {
+    relevant_k <- paste0("X.", K, ".k", 1:K)
+  }
+  return(relevant_k)
+}
+
+rename_fit_row_and_cols <- function(fit, all_K) {
+  colnames(fit$L) <- all_K
+  colnames(fit$F) <- all_K
+  return(fit)
+}

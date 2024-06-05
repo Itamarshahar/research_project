@@ -501,6 +501,8 @@ main <- function() {
   load_libraries()
   loads <- load_objects(path_to_fit, path_to_obj)
   run_main_flow(loads$obj, loads$fit, path_to_plots)
+  generate_box_plot(obj, fit, topic_dir="/Volumes/habib-lab/shmuel.cohen/astrocytes/plots/k10/", columns_list=NULL, size = 60)
+
 }
 
 
