@@ -246,3 +246,40 @@ rename_fit_row_and_cols <- function(fit, all_K) {
   colnames(fit$F) <- all_K
   return(fit)
 }
+
+
+#' Convert DE file to Shiny app format
+#'
+#' This function converts a differential expression (DE) file to a format suitable for a Shiny app.
+#'
+#' @param de_file A data frame containing the DE data, expected to have columns including 'topic' and 'gene'.
+#' @param prefix A character string specifying the prefix for the output CSV file names.
+#' @param brain_part A character string specifying the brain part or region associated with the DE data.
+#'
+#' @return None (output is CSV files written to disk)
+#'
+#' @details
+#' The function iterates over unique topics in the DE file, filters and selects the 'gene' column
+#' for each topic, and writes the data to separate CSV files. Each CSV file will have one column
+#' named 'gene' containing the genes associated with the respective topic.
+#'
+#' @examples
+#' # Example usage:
+#' convert_de_to_shiny_format(de_file = hippo_de,
+#'                            prefix = "/path/to/output/",
+#'                            brain_part = "hippocampus")
+#'
+convert_de_to_shiny_format <- function(de_file, prefix, brain_part) {
+  unique_topics <- unique(de_file$topic)
+
+  for (topic in unique_topics) {
+    # Filter data for the current topic and select only the "gene" column
+    topic_genes <- de_file[de_file$topic == topic, "gene", drop = FALSE]
+
+    # Define the file name
+    file_name <- paste0(prefix, "des_", brain_part, "_X_", length(unique_topics), "_", topic, ".csv")
+
+    # Write the data to a CSV file without row names using base R
+    write.csv(topic_genes, file_name, row.names = FALSE)
+  }
+}
