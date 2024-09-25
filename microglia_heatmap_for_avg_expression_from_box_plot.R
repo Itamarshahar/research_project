@@ -21,18 +21,43 @@ matrix <- matrix(c(
 
 column_sums <- rowSums(matrix)
 matrix <- matrix / column_sums
-rownames(matrix) <- paste0("k", 1:15)
-colnames(matrix) <- c("AD", "MCI", "HA", "SuperAgers", "Young CTRL")
+rownames(matrix) <- paste0("Program.", 1:15)
+colnames(matrix) <- c("Alzheimer", "Mild cognitive impairment", "Healthy aging", "Superagers", "Young")
 pheatmap(matrix,
          cluster_rows = T,
          cluster_cols = F,
-         display_numbers = TRUE,
+         display_numbers = FALSE,
          color = colorRampPalette(c("white", "red"))(50),
          main = "Heatmap of Mean Values",
-         fontsize = 20,
-         angle_col= 45)
+         fontsize = 30,
+         angle_col= 45,
+         edge_color = "white",
+          )
+# ComplexHeatmap::Heatmap(matrix, name = "Mean Values", col = circlize::colorRamp2(c(-1, 0, 1), c("blue", "white", "red")), show_row_names = TRUE, show_column_names = TRUE, row_names_gp = gpar(fontsize = 10), column_names_gp = gpar(fontsize = 10), column_title = "Clusters", row_title = "Cell Types", row_title_side = "left", column_title_side = "top", column_title_gp = gpar(fontsize = 15), row_title_gp = gpar(fontsize = 15), width = unit(10, "cm"), height = unit(10, "cm"), top_annotation = HeatmapAnnotation(foo = anno_text("Mean Values", angle = 90)), bottom_annotation = HeatmapAnnotation(foo = anno_text("Mean Values", angle = 90)))
+# pdf("/Users/itamar_shahar/Downloads/Microglia_Mean Values per diagnosis.pdf",
+#     width = 12,
+#     height = 8)
 
+ComplexHeatmap::Heatmap(matrix,
+                        name = "Mean Values per diagnosis",
+                        cluster_columns=F,
+                        cluster_rows = T,
+                        column_title_side = "top",
+                        row_title_side = "right",
+                        row_names_gp = grid::gpar(fontsize = 20, font=2),
+                        column_names_rot=45,
+                        column_names_gp = grid::gpar(fontsize = 18, fontface="bold"),
+                        column_title_gp = grid::gpar(fontsize = 25, fontface="bold"),
+                        show_row_dend = F,
+                      # column_title_gp = grid::gpar(fontsize = 35),
+                      #       row_title_gp = grid::gpar(fontsize = 35),
+                        # right_annotation=is_shared.k1,
+                        column_title ="Mean Values per diagnosis",
+                        # col = circlize::colorRamp2(c(0, 0.3076923, 0.6153846), c("white","lightblue", "blue"))) #"firebrick4")))
+                        col = circlize::colorRamp2(c(0,0.5), c("white","firebrick4"))
+)
 
+  # dev.off()
 
 # "k1" <-
 # Mean= 0.06
