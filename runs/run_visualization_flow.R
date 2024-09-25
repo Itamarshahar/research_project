@@ -2,7 +2,6 @@
 ###############################################################################
 # Run the DE visualization flow:
 
-
 # Loading libraries  ------------------------------------------------------
 load_libraries <- function() {
   library(Matrix)
@@ -24,7 +23,7 @@ load_libraries <- function() {
   library(ggpointdensity)
   library(reshape2)
   library(glue)
-  source("utils.R")
+  source("/Users/itamar_shahar/Library/CloudStorage/GoogleDrive-itamar.shahar2@mail.huji.ac.il/My Drive/University/General/3rd_year_project/research_project/utils/utils.R")
   library(ComplexHeatmap)
   library(circlize)
   library(combinat)
@@ -616,10 +615,10 @@ generate_DotPlot <- function(obj, custom_feature_names, path_to_plots) {
 #'
 plot_Vln <- function(obj,
                      path_to_plots,
-                     group_by_param,
+                     group_by_param = NA,
                      K = 10,
                      complex_case_text = NA,
-                     split_by = NA)
+                     split_by)
 {
   de_VlnPlot <- list()
   if (!is.na(split_by)) {
@@ -628,7 +627,11 @@ plot_Vln <- function(obj,
                                  features = paste0("k", i),
                                  pt.size = 0,
                                  group.by = group_by_param,
-                                 split.by = "SampleID") +
+                               split.by = split_by,
+                               # fill.by = "Diagnosis"
+                                 # group.by = group_by_param,
+                                 # split.by = "SampleID"
+        ) +
         NoLegend() +
         labs(x = NULL) +
         theme(axis.text.x = element_text(size = 8))
@@ -641,7 +644,7 @@ plot_Vln <- function(obj,
       group_by_param <- paste0(group_by_param, "_", complex_case_text)
     }
     ggsave(combined_plot,
-           file = glue(path_to_plots, "VlnPlot_", group_by_param, "_split_by_SampleID.pdf"),
+           file = glue(path_to_plots, "VlnPlot_", group_by_param, "_split_by_", split_by, ".pdf"),
            width = 15,
            height = K * 2.4)
   }
@@ -650,7 +653,7 @@ plot_Vln <- function(obj,
                                features = paste0("k", i),
                                pt.size = 0,
                                group.by = group_by_param,
-                               #                           split.by = "SampleID"
+                               split.by = split_by,
     ) +
       NoLegend() +
       labs(x = NULL) +
@@ -664,12 +667,18 @@ plot_Vln <- function(obj,
     group_by_param <- paste0(group_by_param, "_", complex_case_text)
   }
   ggsave(combined_plot,
-         file = paste0(path_to_plots, "/VlnPlot-", group_by_param, ".pdf"),
+         file = paste0(path_to_plots, "/VlnPlot_", group_by_param, ".pdf"),
          width = 15,
          height = K * 2.4)
 }
 
 generate_VlnPlot <- function(obj, path_to_plots, K = 10, split_by = NA) {
+  plot_Vln(obj,
+           path_to_plots,
+           group_by_param="Diagnosis_SampleID",
+           K=K,
+           split_by = "Diagnosis"
+  )
   plot_Vln(obj,
            path_to_plots,
            "seurat_clusters",
