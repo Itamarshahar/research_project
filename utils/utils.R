@@ -283,3 +283,13 @@ convert_de_to_shiny_format <- function(de_file, prefix, brain_part) {
     write.csv(topic_genes, file_name, row.names = FALSE)
   }
 }
+
+
+check_and_create_file <- function(filepath) {
+  if (!file.exists(filepath)) {
+    file.create(filepath)
+    cat("File created:", filepath, "\n")
+  } else {
+    cat("File already exists, the file will be override:", filepath, "\n")
+  }
+}
